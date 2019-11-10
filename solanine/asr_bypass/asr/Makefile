@@ -1,5 +1,5 @@
+TARGET = iphone:6.0
 include $(THEOS)/makefiles/common.mk
-
 TOOL_NAME = asr
 
 asr_FILES = main.c

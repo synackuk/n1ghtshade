@@ -27,6 +27,7 @@ int libbelladonna_get_device();
 int libbelladonna_compatible();
 int libbelladonna_exploit();
 int libbelladonna_boot_tethered(char* boot_args);
+int libbelladonna_boot_ramdisk();
 void libbelladonna_exit();
 
 #endif

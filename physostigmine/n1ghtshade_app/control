@@ -1,0 +1,8 @@
+Package: com.synackuk.n1ghtshade
+Name: n1ghtshade
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome application!
+Maintainer: synackuk
+Author: synackuk
+Section: Utilities

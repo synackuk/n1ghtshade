@@ -1,9 +1,0 @@
-Package: com.synackuk.asr_bypass
-Name: asr_bypass
-Version: 0.0.1
-Architecture: iphoneos-arm
-Description: An awesome library of some sort!!
-Maintainer: synackuk
-Author: synackuk
-Section: System
-Tag: role::developer

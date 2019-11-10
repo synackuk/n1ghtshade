@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <payloads/atropine.h>
+#include <payloads/hyoscine.h>
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -255,7 +256,7 @@ static int boot_ibss_normal(char* ibss, size_t ibss_len) {
 	LOG("Executing iBSS\n");
 	ret = libloader_request_image_validation(dev);
 	if(ret != 0) {
-		error("Failed to request image validation.");
+		error("Failed to execute iBSS.");
 		return -1;
 	}
 	return 0;
@@ -337,7 +338,7 @@ static int boot_ibec() {
 	LOG("Executing iBEC\n");
 	ret = libloader_request_image_validation(dev);
 	if(ret != 0) {
-		error("Failed to request image validation.");
+		error("Failed to execute iBEC.");
 		return -1;
 	}
 	return 0;
@@ -445,6 +446,62 @@ int libbelladonna_boot_tethered(char* boot_args) {
 	ret = libloader_send_cmd(dev, boot_arg_cmd);
 	if(ret != 0) {
 		error("Failed to set boot-args");
+		return -1;
+	}
+	LOG("Patching Kernel\n");
+	ret = libloader_send_cmd(dev, "atropine patch krnl");
+	if(ret != 0) {
+		error("Failed to patch kernelcache.");
+		return -1;
+	}
+	LOG("Booting kernel\n");
+	ret = libloader_send_cmd(dev, "atropine load krnl");
+	if(ret != 0) {
+		error("Failed to load kernel");
+		return -1;
+	}
+	libloader_send_cmd(dev, "bootx");
+	return 0;
+}
+
+static int load_ramdisk() {
+	int ret;
+	LOG("Uploading ramdisk\n");
+	ret = libloader_send_buffer(dev, (unsigned char*)hyoscine, hyoscine_length);
+	if(ret != 0) {
+		error("Failed to upload ramdisk.");
+		return -1;
+	}
+	LOG("Loading ramdisk\n");
+	ret = libloader_send_cmd(dev, "ramdisk");
+	if(ret != 0) {
+		error("Failed to load ramdisk.");
+		return -1;
+	}
+	return 0;
+}
+
+int libbelladonna_boot_ramdisk() {
+	int ret;
+	ret = libloader_is_dfu(dev);
+	if(ret) {
+		error("Device isn't in recovery mode.");
+		return -1;
+	}
+	LOG("Setting device tree\n");
+	ret = libloader_send_cmd(dev, "atropine load dtre");
+	if(ret != 0) {
+		error("Failed to load devicetree.");
+		return -1;
+	}
+	ret = libloader_send_cmd(dev, "devicetree");
+	if(ret != 0) {
+		error("Failed to set devicetree.");
+		return -1;
+	}
+	ret = load_ramdisk();
+	if(ret != 0) {
+		error("Failed to load ramdisk.");
 		return -1;
 	}
 	LOG("Patching Kernel\n");

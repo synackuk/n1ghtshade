@@ -25,3 +25,4 @@ clean:
 	@make clean -C tools
 	@$(RM) -rf *.o
 	@$(RM) -rf *.a
+	@$(RM) -rf payloads
