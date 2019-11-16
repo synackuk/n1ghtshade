@@ -35,12 +35,18 @@
 	}
 	NSDictionary *package = packages[indexPath.row];
 	cell.textLabel.text = package[@"title"];
+	NSData* image_data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: package[@"image"]]];
+	cell.imageView.image = [UIImage imageWithData:image_data];
 	cell.detailTextLabel.text = package[@"description"];
 	if(access([package[@"install_check"] UTF8String], F_OK) == 0) { // Prevent installing twice
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
 		cell.userInteractionEnabled = false;
 		cell.detailTextLabel.text = [NSString stringWithFormat: @"%@ is already installed.", package[@"title"]];
 	}
+	else {
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	}
+	
 	return cell;
 }
 

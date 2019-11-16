@@ -10,6 +10,11 @@ int init_framebuffer() {
 	return 0;
 }
 
+void fb_set_loc(int x, int y) {
+	fb_x = x;
+	fb_y = y;
+}
+
 int font_get_pixel(int ch, int x, int y) {
 	register int bitIndex = ((font_width * font_height) * ch) + (font_width * y) + x;
 	return (font_data[bitIndex / 8] >> (bitIndex % 8)) & 0x1;
@@ -77,3 +82,5 @@ void fb_print(const char* str) {
 		fb_putc(str[i]);
 	}
 }
+
+

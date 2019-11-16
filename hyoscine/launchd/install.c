@@ -7,6 +7,7 @@
 
 
 #define INSTALL_N1GHTSHADE_APP
+#define JB_INIT
 #define PATCH_FSTAB
 #define SHOW_NON_DEFAULT_SYSTEM_APPS
 #define KILL_SOFTWARE_UPDATE
@@ -17,6 +18,13 @@ int install_physostigmine() {
 
 #ifdef INSTALL_N1GHTSHADE_APP
 	ret = install_n1ghtshade_app();
+	if(ret != 0) {
+		return -1;
+	}
+#endif
+
+#ifdef JB_INIT
+	ret = install_jb_init();
 	if(ret != 0) {
 		return -1;
 	}

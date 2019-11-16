@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <payloads/atropine.h>
 #include <payloads/hyoscine.h>
+#include <libidevicerestore/idevicerestore.h>
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -77,7 +78,9 @@ void libbelladonna_init() {
 }
 
 void libbelladonna_exit() {
-	libloader_close(dev);
+	if(dev){
+		libloader_close(dev);
+	}
 	libloader_exit();
 	exploits_exit();
 }
@@ -87,14 +90,13 @@ int libbelladonna_get_device() {
 	if(!dev) {
 		return -1;
 	}
+	if(!libloader_is_dfu(dev)) {
+		return -1;
+	}
 	return 0;
 }
 
 int libbelladonna_compatible() {
-	if(!libloader_is_dfu(dev)) {
-		error("Device not in DFU mode.");
-		return -1;
-	}
 	exploit_list* curr = exploits;
 	int ret;
 	while(curr != NULL) {
@@ -520,3 +522,39 @@ int libbelladonna_boot_ramdisk() {
 	return 0;
 }
 
+int libbelladonna_restore_ipsw(char* path) {
+	int ret;
+	ret = libloader_is_dfu(dev);
+	if(ret) {
+		error("Device isn't in recovery mode.");
+		return -1;
+	}
+	LOG("Patching Kernel\n");
+	ret = libloader_send_cmd(dev, "atropine patch krnl");
+	if(ret != 0) {
+		error("Failed to patch kernelcache.");
+		return -1;
+	}
+	libloader_close(dev);
+	dev = NULL;
+
+	libloader_close(dev);
+	struct idevicerestore_client_t* client = idevicerestore_client_new();
+	if (!client) {
+		error("Failed to create restore client.");
+		return -1;
+	}
+	client->flags |= FLAG_ERASE;
+	client->flags |= FLAG_LATEST_SHSH;
+	client->flags |= FLAG_NO_IBEC_UPLOAD;
+	client->flags &= ~FLAG_INTERACTIVE;
+	client->ipsw = strdup(path);
+	int result = idevicerestore_start(client);
+	if(result != 0) {
+		error("Failed to restore device.");
+		return -1;
+	}
+	idevicerestore_client_free(client);
+	
+	return 0;
+}

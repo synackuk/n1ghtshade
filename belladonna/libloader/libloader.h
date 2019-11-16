@@ -14,6 +14,8 @@
 #define RECOVERY_MODE_3 0x1282
 #define RECOVERY_MODE_4 0x1283
 
+#define NORMAL_MODE 0x1290
+
 typedef struct libloader_device_t{
 	libusb_device_handle* dev;
 	int mode;

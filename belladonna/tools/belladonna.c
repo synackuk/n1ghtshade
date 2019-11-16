@@ -10,6 +10,7 @@ void usage(char** argv) {
 	printf("\t-r\t\tPut device in pwned Recovery mode\n");
 	printf("\t-b\t\tBoot device tethered\n");
 	printf("\t-j\t\tBoot jailbreak ramdisk\n");
+	printf("\t-w <path>\tRestore Patched IPSW at path\n");
 }
 
 int main(int argc, char** argv) {
@@ -18,6 +19,7 @@ int main(int argc, char** argv) {
 	int pwned_recovery = 0;
 	int tethered_boot = 0;
 	int ramdisk_boot = 0;
+	char* restore_path = NULL;
 
 	if(argc == 1) {
 		usage(argv);
@@ -39,6 +41,15 @@ int main(int argc, char** argv) {
 		pwned_dfu = 1;
 		pwned_recovery = 1;
 		ramdisk_boot = 1;
+	}
+	else if(!strcmp(argv[1], "-w")) {
+		if(argc < 3) {
+			usage(argv);
+			return -1;
+		}
+		pwned_dfu = 1;
+		pwned_recovery = 1;
+		restore_path = argv[2];
 	}
 	else {
 		usage(argv);
@@ -71,7 +82,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	if(tethered_boot){
-		ret = libbelladonna_boot_tethered("-v");
+		ret = libbelladonna_boot_tethered("cs_enforcement_disable=1");
 		if (ret != 0) {
 			libbelladonna_exit();
 			printf("Failed to boot tethered\n");
@@ -83,6 +94,14 @@ int main(int argc, char** argv) {
 		if (ret != 0) {
 			libbelladonna_exit();
 			printf("Failed to boot tethered\n");
+			return -1;
+		}
+	}
+	if(restore_path) {
+		ret = libbelladonna_restore_ipsw(restore_path);
+		if (ret != 0) {
+			libbelladonna_exit();
+			printf("Failed to restore device\n");
 			return -1;
 		}
 	}

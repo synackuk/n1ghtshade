@@ -276,4 +276,8 @@ void* branch_search(const void* start_addr, int len, int searchup) {
     return ret;
 }
 
-
+void* push_lr_search_up(const void* start_addr, int len) {
+	/* F0 B5 <-- PUSH LR */
+	/* F0 BD <-- POP PC */
+	return pattern_search(start_addr, len, 0x0000B580, 0x0000FF80, -2);
+}

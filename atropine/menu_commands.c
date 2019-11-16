@@ -51,6 +51,7 @@ int load_command(int argc, command_args* argv) {
 		return -1;
 	}
 	if(!strcmp(argv[1].string, "krnl")){
+		log("Loading kernel\n");
 		/* load kernel, iH8sn0w style */
 		fs_mount("nand0a", "hfs", "/boot");
 		if ((size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache", addr, &size)) &&
@@ -62,10 +63,12 @@ int load_command(int argc, command_args* argv) {
 		}
 	}
 	else if(!strcmp(argv[1].string, "dtre")) {
+		log("Loading device tree\n");
 		load_image_from_bdev(addr, DEVICE_TREE_TAG, (size_t*)&size);
 	}
 	else if(!strcmp(argv[1].string, "logo")) {
 		load_image_from_bdev(addr, LOGO_TAG, (size_t*)&size);
+		fb_set_loc(0, 0);
 	}
 	set_env_uint("filesize", size, 0);
 	return 0;

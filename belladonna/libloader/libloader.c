@@ -167,7 +167,7 @@ libloader_device_t libloader_get_device_handle() {
 		if(ret != 0) {
 			return NULL;
 		}
-		if(desc.idVendor == APPLE_VID && (desc.idProduct == DFU_MODE || desc.idProduct == RECOVERY_MODE_1 || desc.idProduct == RECOVERY_MODE_2 || desc.idProduct == RECOVERY_MODE_3 || desc.idProduct == RECOVERY_MODE_4)) {
+		if(desc.idVendor == APPLE_VID && (desc.idProduct == DFU_MODE || desc.idProduct == RECOVERY_MODE_1 || desc.idProduct == RECOVERY_MODE_2 || desc.idProduct == RECOVERY_MODE_3 || desc.idProduct == RECOVERY_MODE_4 || desc.idProduct == NORMAL_MODE)) {
 			break;
 		}
 	}

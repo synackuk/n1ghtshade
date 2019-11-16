@@ -28,6 +28,7 @@ int libbelladonna_compatible();
 int libbelladonna_exploit();
 int libbelladonna_boot_tethered(char* boot_args);
 int libbelladonna_boot_ramdisk();
+int libbelladonna_restore_ipsw(char* path);
 void libbelladonna_exit();
 
 #endif

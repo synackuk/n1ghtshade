@@ -1,8 +1,8 @@
 CC = gcc
 RM = rm
 CFLAGS = -I../
-LDFLAGS = -L/usr/lib -L/usr/local/lib -L../ -L../libloader
-LIBRARIES = -lusb-1.0 -lfragmentzip -lbelladonna -lloader
+LDFLAGS = -L/usr/lib -L/usr/local/lib -L../ -L../libloader -L../libidevicerestore -L/usr/local/opt/openssl/lib
+LIBRARIES = -lusb-1.0 -lfragmentzip -lbelladonna -lloader -lz -lzip -lirecovery -limobiledevice -lplist -lcrypto -lcurl -lidevicerestore
 OBJECTS = belladonna.o
 
 all: belladonna

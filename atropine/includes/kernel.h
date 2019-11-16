@@ -25,6 +25,7 @@
 #define KERNEL_H
 
 #define KERNEL_BASE_ADDRESS 0x80001000
+#define KERNEL_LEN 0xF00000
 #define	LC_SEGMENT	0x1	/* segment of this file to be mapped */
 #define	LC_SYMTAB	0x2	/* link-edit stab symbol table info */
 

@@ -48,5 +48,6 @@ void* pop_search(const void* start_addr, int len, int searchup);
 void* branch_thumb_unconditional_search(const void* start_addr, int len, int searchup);
 void* branch_thumb_conditional_search(const void* start_addr, int len, int searchup);
 void* branch_search(const void* start_addr, int len, int searchup);
+void* push_lr_search_up(const void* start_addr, int len);
 
 #endif

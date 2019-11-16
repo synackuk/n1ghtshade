@@ -7,6 +7,7 @@
 #define COLOUR_BLACK RGB(0, 0, 0)
 
 int init_framebuffer();
+void fb_set_loc(int x, int y);
 #ifdef DISPLAY_OUTPUT
 void fb_print(const char* str);
 #else
