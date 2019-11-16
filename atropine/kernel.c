@@ -755,6 +755,9 @@ int patch_i_can_has_debugger(char* address) {
 		uint16_t* insn = (uint16_t*)&pe_i_can_has_debugger_func[i];
 		if(insn_is_ldr_imm(insn)) {
 			i_can_has_debugger_offset = (uint32_t)find_pc_rel_value(KERNEL_BASE_ADDRESS, address, KERNEL_LEN, insn, insn_ldr_reg_rn(insn));
+			if(i_can_has_debugger_offset) {
+				break;
+			}
 		}
 		i += insn_is_32bit(insn) ? 2 : 1;
 	}
