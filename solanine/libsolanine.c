@@ -17,6 +17,8 @@
 
 #include <asr_bypass.h>
 
+#define LOG solanine_log
+
 #define API_URL "https://api.ipsw.me"
 #define API_KEYS_URL API_URL "/v4/keys/ipsw/%s/%s"
 #define DEVICE_URL API_URL "/v4/device/%s"

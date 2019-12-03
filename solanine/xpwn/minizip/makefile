@@ -5,13 +5,16 @@ CP = cp
 CFLAGS = -I/usr/local/include -I/opt/local/include -I../includes -I./
 OBJECTS = ioapi.o unzip.o zip.o
 
-all: libminizip
+all: libminizip.a
 	@$(CP) *.a ../lib
 
-libminizip: $(OBJECTS)
-	@$(AR) rs libminizip.a $(OBJECTS)
+libminizip.a: $(OBJECTS)
+	@echo Building $(@)
+	@echo AR rs $(@) $(OBJECTS)
+	@$(AR) rs $(@) $(OBJECTS)
 
 %.o: %.c
+	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
 
 clean:

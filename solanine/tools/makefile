@@ -8,9 +8,11 @@ OBJECTS = solanine.o
 all: solanine
 
 solanine: $(OBJECTS)
+	@echo Building $(@)
 	@$(CC) $(LDFLAGS) $(LIBRARIES) -o solanine $(OBJECTS)
 
 %.o: %.c
+	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
 
 clean:

@@ -4,6 +4,7 @@
 #include <modules/n1ghtshade_app.h>
 #include <modules/non_default_apps.h>
 #include <modules/hacktivate.h>
+#include <modules/jb_init.h>
 
 
 #define INSTALL_N1GHTSHADE_APP

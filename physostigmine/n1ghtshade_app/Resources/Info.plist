@@ -12,6 +12,7 @@
 			<array>
 				<string>icon</string>
 				<string>icon@2x</string>
+				<string>icon-ios7</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>
@@ -24,6 +25,7 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string>icon-ipad</string>
+				<string>icon-ipad-ios7</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>

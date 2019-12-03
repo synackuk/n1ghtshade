@@ -1,3 +1,6 @@
+#ifndef DEVICE_IDENTIFIERS_H
+#define DEVICE_IDENTIFIERS_H
+
 typedef struct device_identifier {
 	char* product_identifier;
 	uint8_t bdid;
@@ -117,3 +120,5 @@ static const device_identifier device_identifiers[] = {
 	{ "AppleTV6,2",  0x02, 0x8011 },
 	{ NULL,         -1,   -1,     }
 };
+
+#endif

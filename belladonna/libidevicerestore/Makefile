@@ -5,9 +5,12 @@ OBJECTS = idevicerestore.o common.o tss.o fls.o mbn.o img3.o img4.o ftab.o ipsw.
 all: libidevicerestore.a
 
 libidevicerestore.a: $(OBJECTS)
-	@$(AR) rs libidevicerestore.a $(OBJECTS)
+	@echo Building $(@)
+	@echo AR rs $(@) $(OBJECTS)
+	@$(AR) rs $(@) $(OBJECTS)
 
 %.o: %.c
+	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
 	
 clean:

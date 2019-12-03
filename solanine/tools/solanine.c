@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
 	libsolanine_init();
 	ret = libsolanine_patch_ipsw(argv[1], argv[2], argv[3]);
 	if(ret != 0) {
+		libsolanine_exit();
 		printf("Failed to patch ipsw\n");
 		return -1;
 	}

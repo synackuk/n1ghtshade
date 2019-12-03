@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
 	int tethered_boot = 0;
 	int ramdisk_boot = 0;
 	char* restore_path = NULL;
+	char boot_args[255];
+	bzero(boot_args, 255);
 
 	if(argc == 1) {
 		usage(argv);
@@ -36,6 +38,9 @@ int main(int argc, char** argv) {
 		pwned_dfu = 1;
 		pwned_recovery = 1;
 		tethered_boot = 1;
+		if(argc > 2) {
+			strncpy(boot_args, argv[2], 255);
+		}
 	}
 	else if(!strcmp(argv[1], "-j")) {
 		pwned_dfu = 1;
@@ -56,17 +61,18 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	libbelladonna_init();
-	printf("Waiting for device in DFU mode\n");
-	while(libbelladonna_get_device() != 0) {
+	while(libbelladonna_get_device() != 0 || libbelladonna_exploit_for_mode() != 0) {
+		printf("Waiting for device in DFU mode\n");
 		sleep(1);
 	}
 	ret = libbelladonna_compatible();
 	if(ret != 0) {
+		libbelladonna_exit();
 		printf("Device not compatible\n");
 		return -1;
 	}
 	if(pwned_dfu) {
-	ret = libbelladonna_exploit(); 
+		ret = libbelladonna_exploit(); 
 		if (ret != 0) {
 			libbelladonna_exit();
 			printf("Failed to enter Pwned DFU mode\n");
@@ -82,7 +88,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	if(tethered_boot){
-		ret = libbelladonna_boot_tethered("cs_enforcement_disable=1");
+		ret = libbelladonna_boot_tethered(boot_args);
 		if (ret != 0) {
 			libbelladonna_exit();
 			printf("Failed to boot tethered\n");
@@ -93,7 +99,7 @@ int main(int argc, char** argv) {
 		ret = libbelladonna_boot_ramdisk();
 		if (ret != 0) {
 			libbelladonna_exit();
-			printf("Failed to boot tethered\n");
+			printf("Failed to boot ramdisk\n");
 			return -1;
 		}
 	}

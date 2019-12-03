@@ -16,6 +16,7 @@ clean:
 	@$(RM) -rf launchd
 
 launchd: $(OBJECTS)
+	@echo CC -c $(<) -o $(@)
 	@$(CC) -o launchd $(OBJECTS) $(CFLAGS) $(LDFLAGS)
 
 %.o: %.c

@@ -4,6 +4,14 @@ int num_commands = 0;
 
 command_descriptor* commands[50];
 
+int help_command(int argc, command_args* argv) {
+	printf("Availible commands:\n");
+	for(int i = 0; i < num_commands; i++) {
+		printf("\t%s\t%s\n", commands[i]->name, commands[i]->description);
+	}
+	return 0;
+}
+
 int add_command(char* name, command handler, char* description) {
 	if(num_commands >= 50) {
 		error("Maximum commands reached.\n");
@@ -24,6 +32,6 @@ int parse_command(int argc, command_args* argv){
 			return 0;
 		}
 	}
-	printf("Unrecognised command \"%s\".\n", argv[0].string);
+	printf("Unrecognised command \"%s\", try \"help\" for a list of commands.\n", argv[0].string);
 	return 0;
 }

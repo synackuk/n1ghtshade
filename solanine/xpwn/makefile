@@ -1,13 +1,34 @@
 MKDIR = mkdir
 RM = rm
-all:
-	@$(RM) -rf lib
-	@$(MKDIR) lib
-	@make -C common
-	@make -C dmg
-	@make -C hfs
-	@make -C ipsw-patch
-	@make -C minizip
+
+.PHONY: lib common dmg hfs ipsw-patch minizip
+
+all: lib common dmg hfs ipsw-patch minizip
+
+lib:
+	$(MKDIR) lib
+
+common:
+	@echo Building $(@)
+	@make -C $(@)
+
+dmg:
+	@echo Building $(@)
+	@make -C $(@)
+
+hfs:
+	@echo Building $(@)
+	@make -C $(@)
+
+ipsw-patch:
+	@echo Building $(@)
+	@make -C $(@)
+
+minizip:
+	@echo Building $(@)
+	@make -C $(@)
+
+
 clean:
 	@$(RM) -rf lib
 	@make clean -C common

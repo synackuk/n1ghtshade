@@ -16,14 +16,6 @@ int fb_echo_command(int argc, command_args* argv) {
 	return 0;
 }
 
-int help_command(int argc, command_args* argv) {
-	printf("Availible commands:\n");
-	for(int i = 0; i < num_commands; i++) {
-		printf("\t%s\t%s\n", commands[i]->name, commands[i]->description);
-	}
-	return 0;
-}
-
 int jump_command(int argc, command_args* argv) {
 	jumpto(0, load_address, 0, 0);
 	return 0;
@@ -58,7 +50,7 @@ int load_command(int argc, command_args* argv) {
 			(size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache.s5l8920x", addr, &size)) &&
 			(size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache.s5l8922x", addr, &size)) &&
 			(size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache.s5l8720x", addr, &size))) {
-			printf("kernel read err1\n");
+			error("Failed to read kernel\n");
 			return -1;
 		}
 	}

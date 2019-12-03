@@ -17,6 +17,7 @@ typedef struct command_descriptor {
 	char* description;
 } command_descriptor;
 
+int help_command(int argc, command_args* argv);
 int add_command(char* name, command handler, char* description);
 int parse_command(int argc, command_args* argv);
 

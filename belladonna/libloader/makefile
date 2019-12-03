@@ -10,6 +10,7 @@ libloader.a: $(OBJECTS)
 	@$(AR) rs libloader.a $(OBJECTS)
 
 %.o: %.c
+	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
 	
 clean:

@@ -86,10 +86,18 @@ void libbelladonna_exit() {
 }
 
 int libbelladonna_get_device() {
+	if(dev) {
+		libloader_close(dev);
+		dev = NULL;
+	}
 	dev = libloader_get_device_handle();
 	if(!dev) {
 		return -1;
 	}
+	return 0;
+}
+
+int libbelladonna_exploit_for_mode() {
 	if(!libloader_is_dfu(dev)) {
 		return -1;
 	}
@@ -410,22 +418,22 @@ int libbelladonna_boot_tethered(char* boot_args) {
 		error("Device isn't in recovery mode.");
 		return -1;
 	}
-	LOG("Setting apple logo\n");
-	ret = libloader_send_cmd(dev, "atropine load logo");
-	if(ret != 0) {
-		error("Failed to load apple logo.");
-		return -1;
-	}
-	ret = libloader_send_cmd(dev, "setpicture");
-	if(ret != 0) {
-		error("Failed to set applelogo.");
-		return -1;
-	}
-	ret = libloader_send_cmd(dev, "bgcolor 0 0 0");
-	if(ret != 0) {
-		error("Failed to set background colour.");
-		return -1;
-	}
+	//LOG("Setting apple logo\n");
+	//ret = libloader_send_cmd(dev, "atropine load logo");
+	//if(ret != 0) {
+	//	error("Failed to load apple logo.");
+	//	return -1;
+	//}
+	//ret = libloader_send_cmd(dev, "setpicture");
+	//if(ret != 0) {
+	//	error("Failed to set applelogo.");
+	//	return -1;
+	//}
+	//ret = libloader_send_cmd(dev, "bgcolor 0 0 0");
+	//if(ret != 0) {
+	//	error("Failed to set background colour.");
+	//	return -1;
+	//}
 	LOG("Setting device tree\n");
 	ret = libloader_send_cmd(dev, "atropine load dtre");
 	if(ret != 0) {
@@ -557,4 +565,8 @@ int libbelladonna_restore_ipsw(char* path) {
 	idevicerestore_client_free(client);
 	
 	return 0;
+}
+
+char* libbelladonna_get_identifier() {
+	return libloader_get_identifier(dev);
 }

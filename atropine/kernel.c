@@ -1,8 +1,6 @@
 #include <common.h>
 #include <include/functions.h>
 
-// Uses code from CBPatcher.
-
 #define BX_LR 0x4770
 
 static uint32_t bit_range(uint32_t x, int start, int end)
@@ -593,37 +591,6 @@ static uint16_t* find_literal_ref(uint32_t region, uint8_t* kdata, size_t ksize,
 	return NULL;
 }
 
-struct find_search_mask
-{
-	uint16_t mask;
-	uint16_t value;
-};
-
-// Search the range of kdata for a series of 16-bit values that match the search mask.
-static uint16_t* find_with_search_mask(uint32_t region, uint8_t* kdata, size_t ksize, int num_masks, const struct find_search_mask* masks)
-{
-	uint16_t* end = (uint16_t*)(kdata + ksize - (num_masks * sizeof(uint16_t)));
-	uint16_t* cur;
-	for(cur = (uint16_t*) kdata; cur <= end; ++cur)
-	{
-		int matched = 1;
-		int i;
-		for(i = 0; i < num_masks; ++i)
-		{
-			if((*(cur + i) & masks[i].mask) != masks[i].value)
-			{
-				matched = 0;
-				break;
-			}
-		}
-
-		if(matched)
-			return cur;
-	}
-
-	return NULL;
-}
-
 /* Find start of a load command in a macho */
 static struct load_command *find_load_command(struct mach_header *mh, uint32_t cmd)
 {
@@ -657,7 +624,6 @@ static void* find_sym(struct mach_header *mh, const char *name) {
 	}
 	return 0;
 }
-
 
 int patch_proc_enforce(char* address) {
 	// Find the description.
@@ -804,6 +770,7 @@ int patch_kernel(char* address) {
 	if(ret != 0) {
 		return -1;
 	}
+	
 	return 0;
 }
 

@@ -1,9 +1,13 @@
+#ifndef DEVICE_LOADERS_H
+#define DEVICE_LOADERS_H
+
 typedef struct device_loader {
 	char* identifier;
 	char* ipsw_url;
 	char* ibss_path;
 	char* ibec_path;
 } device_loader;
+
 static const device_loader device_loaders[] = {
 	{ "iPhone1,1",   NULL},
 	{ "iPhone1,2",   NULL},
@@ -111,3 +115,5 @@ static const device_loader device_loaders[] = {
 	{ "AppleTV6,2",  NULL},
 	{ NULL,          NULL}
 };
+
+#endif

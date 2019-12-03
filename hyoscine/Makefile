@@ -19,6 +19,7 @@ hyoscine.dmg: launchd/launchd
 	@$(HFSPLUS) hyoscine.dmg addall modules /modules
 
 launchd/launchd:
+	@echo Building $(@)
 	@make -C launchd
 
 

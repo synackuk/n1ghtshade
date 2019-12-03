@@ -8,9 +8,11 @@ OBJECTS = belladonna.o
 all: belladonna
 
 belladonna: $(OBJECTS)
+	@echo Building $(@)
 	@$(CC) $(LDFLAGS) $(LIBRARIES) -o belladonna $(OBJECTS)
 
 %.o: %.c
+	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
 
 clean:

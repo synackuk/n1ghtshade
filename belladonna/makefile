@@ -3,24 +3,35 @@ AR = ar
 RM = rm
 CFLAGS = -I/usr/local/include -I/opt/local/include -I. -I./ipsw -I./libloader
 OBJECTS = libbelladonna.o exploits/checkm8/checkm8.o libloader/libloader.a libidevicerestore/libidevicerestore.a
+PAYLOADS = payloads/atropine.h payloads/hyoscine.h
 
-all: libbelladonna
+all: libbelladonna.a
 	@make -C tools
 
-libbelladonna: $(OBJECTS)
-	@$(AR) rs libbelladonna.a $(OBJECTS)
+libbelladonna.a: $(PAYLOADS) $(OBJECTS)
+	@echo Building $(@)
+	@echo AR rs $(@) $(OBJECTS)
+	@$(AR) rs $(@) $(OBJECTS)
 
 libloader/libloader.a: libloader
+	@echo Building $(@)
 	@make -C libloader
 
 libidevicerestore/libidevicerestore.a: libidevicerestore
-	@make -C libidevicerestore
+	@echo Building $(@)
+	@make -C $(<)
 
 exploits/%: exploits
-	@make -C exploits
+	@echo Building $(@)
+	@make -C $(<)
 
 %.o: %.c
+	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
+
+payloads/%.h: $(patsubst %,../%,%)
+	@echo Building $(<)
+	@make -C $(<)
 
 clean:
 	@make clean -C exploits

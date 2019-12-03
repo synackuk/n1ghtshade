@@ -13,10 +13,12 @@ OBJS = $(patsubst %,$(BUILD_DIR)/%,$(OBJECTS))
 OBJCOPY = $(CROSS)objcopy
 
 $(BUILD_DIR)/%.o: $(BASE_DIR)%.S
+	@echo CC -c $(<) -o $(@)
 	@$(MKDIR) -p $(BUILD_DIR)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@) 
 
 $(BUILD_DIR)/%.o: $(BASE_DIR)%.c
+	@echo CC -c $(<) -o $(@)
 	@$(MKDIR) -p $(BUILD_DIR)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@) 
 

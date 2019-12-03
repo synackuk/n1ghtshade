@@ -9,11 +9,13 @@ OBJS = $(patsubst %,$(BUILD_DIR)/%,$(OBJECTS))
 CFLAGS = -Wall -W -pedantic -Wno-long-long -Wno-main -Os -fcall-used-r9 -fpie -I../
 
 $(BUILD_DIR)/%.o: $(BASE_DIR)%.c
+	@echo CC -c $(<) -o $(@)
 	@mkdir -p $(BUILD_DIR)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
 
 libp.a: $(OBJS)
-	@$(AR) crus libp.a $(OBJS)
+	@echo AR crus $(@) $(OBJS)
+	@$(AR) crus $(@) $(OBJS)
 all: libp.a
 
 clean:
