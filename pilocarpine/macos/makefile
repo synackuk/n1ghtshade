@@ -1,4 +1,5 @@
 CC = gcc
+STRIP = strip
 RM = rm
 INSTALL_NAME_TOOL = install_name_tool
 CFLAGS = -I. -I../../belladonna
@@ -21,7 +22,8 @@ n1ghtshade.app: $(OBJECTS)
 	@$(INSTALL_NAME_TOOL) -change @@HOMEBREW_PREFIX@@/opt/libusb/lib/libusb-1.0.0.dylib @loader_path/../Frameworks/libusb-1.0.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/lib/libirecovery.2.dylib @loader_path/../Frameworks/libirecovery.2.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/lib/libimobiledevice.6.dylib @loader_path/../Frameworks/libimobiledevice.6.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
-
+	@echo STRIP n1ghtshade.app/Contents/MacOS/n1ghtshade
+	@$(STRIP) n1ghtshade.app/Contents/MacOS/n1ghtshade
 %.o: %.m
 	@echo CC -c $(<) -o $(@)
 	@$(CC) $(CFLAGS) -c $(<) -o $(@)
