@@ -17,6 +17,11 @@
 
 * Can be downloaded from [here](https://github.com/synackuk/n1ghtshade/releases)
 
+#### Support
+
+* Please report any bugs in the [github issues](https://github.com/synackuk/n1ghtshade/issues), or to me on twitter [(@synackuk)](https://twitter.com/synackuk)
+* You can get help from me on Twitter also
+
 #### Credits
 
 * Thanks to [axi0mX](https://github.com/axi0mX) for [checkm8](https://github.com/axi0mX/ipwndfu)
