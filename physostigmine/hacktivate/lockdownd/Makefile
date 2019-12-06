@@ -2,7 +2,7 @@ TARGET = iphone:6.0
 include $(THEOS)/makefiles/common.mk
 TOOL_NAME = lockdownd
 
-lockdownd_FILES = main.c
+lockdownd_FILES = main.m
 lockdownd_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tool.mk

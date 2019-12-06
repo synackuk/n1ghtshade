@@ -2,6 +2,8 @@
 #import <Foundation/Foundation.h>
 #import <main_view.h>
 #import <tethered_boot_view.h>
+#import <jailbreak_view.h>
+#import <restore_view.h>
 #import <common.h>
 
 int main(int argc, const char * argv[]) {
@@ -38,6 +40,8 @@ int main(int argc, const char * argv[]) {
 
 	init_main_view();
 	init_tethered_boot_view();
+	init_jailbreak_view();
+	init_restore_view();
 
 	// Set the main view as the visible one
 

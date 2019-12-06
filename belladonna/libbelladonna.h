@@ -6,8 +6,10 @@
 typedef int(*exploit_supported)(libloader_device_t dev);
 typedef libloader_device_t(*exploit_func)(libloader_device_t dev);
 typedef void(*belladonna_log_cb)(char* msg);
+typedef void(*belladonna_prog_cb)(unsigned int progress);
 
 extern belladonna_log_cb belladonna_log;
+extern belladonna_prog_cb belladonna_prog;
 
 #define LOG belladonna_log
 
@@ -22,11 +24,10 @@ typedef struct exploit_list {
 
 int libbelladonna_enter_recovery();
 void libbelladonna_set_log_cb(belladonna_log_cb new_cb);
+void libbelladonna_set_prog_cb(belladonna_prog_cb new_cb);
 void libbelladonna_init();
 int libbelladonna_get_device();
-char* libbelladonna_get_identifier();
 int libbelladonna_compatible();
-int libbelladonna_exploit_for_mode();
 int libbelladonna_exploit();
 int libbelladonna_boot_tethered(char* boot_args);
 int libbelladonna_boot_ramdisk();

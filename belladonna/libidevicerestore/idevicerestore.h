@@ -46,6 +46,7 @@ extern "C" {
 #define FLAG_INTERACTIVE     (1 << 9)
 #define FLAG_LATEST_SHSH     (1 << 10)
 #define FLAG_NO_IBEC_UPLOAD  (1 << 11)
+#define FLAG_LATEST_BASEBAND (1 << 12)
 
 typedef void (*idevicerestore_progress_cb_t)(int step, double step_progress, void* userdata);
 
@@ -82,7 +83,6 @@ struct idevicerestore_client_t {
 	cond_t device_event_cond;
 	int ignore_device_add_events;
 };
-
 enum {
 	RESTORE_STEP_DETECT = 0,
 	RESTORE_STEP_PREPARE,
@@ -93,6 +93,8 @@ enum {
 	RESTORE_STEP_FUD,
 	RESTORE_NUM_STEPS
 };
+
+typedef void (*idevicerestore_progress_cb_t)(int step, double step_progress, void* userdata);
 
 struct idevicerestore_client_t* idevicerestore_client_new(void);
 void idevicerestore_client_free(struct idevicerestore_client_t* client);

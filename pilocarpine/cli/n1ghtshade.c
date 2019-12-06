@@ -1,4 +1,3 @@
-#include <libsolanine.h>
 #include <libbelladonna.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,7 +6,6 @@
 
 void usage(char** argv) {
 	printf("Usage: %s [options]\n", argv[0]);
-	printf("\t-p <input> <output>\tPatch IPSW\n");
 	printf("\t-b [boot_args]\t\tBoot device tethered\n");
 	printf("\t-j\t\t\tBoot jailbreak ramdisk\n");
 	printf("\t-w <path>\t\tRestore Patched IPSW at path\n");
@@ -17,7 +15,6 @@ int main(int argc, char** argv) {
 	printf("n1ghtshade by @synackuk\n");
 	int ret;
 	char* input_ipsw;
-	char* output_ipsw;
 	char boot_args[255];
 	bzero(boot_args, 255);
 	int patch_ipsw;
@@ -28,15 +25,6 @@ int main(int argc, char** argv) {
 	if(argc == 1) {
 		usage(argv);
 		return -1;
-	}
-	if(!strcmp(argv[1], "-p")) {
-		if(argc < 4) {
-			usage(argv);
-			return -1;
-		}
-		input_ipsw = argv[2];
-		output_ipsw = argv[3];
-		patch_ipsw = 1;
 	}
 	else if(!strcmp(argv[1], "-b")) {
 		tethered_boot = 1;
@@ -64,28 +52,6 @@ int main(int argc, char** argv) {
 
 	while(libbelladonna_get_device() != 0) {
 		printf("Waiting for device\n");
-		sleep(1);
-	}
-	char* identifier = libbelladonna_get_identifier();
-	if(!identifier) {
-		printf("Failed to get device identifier\n");
-		return -1;
-	}
-
-	if(patch_ipsw) {
-		libbelladonna_exit();
-		libsolanine_init();
-		ret = libsolanine_patch_ipsw(input_ipsw, output_ipsw, identifier);
-		if(ret != 0) {
-			printf("Failed to patch ipsw\n");
-			return -1;
-		}
-		libsolanine_exit();
-		return 0;
-	}
-
-	while(libbelladonna_get_device() != 0 || libbelladonna_exploit_for_mode() != 0) {
-		printf("Waiting for device to enter DFU mode\n");
 		sleep(1);
 	}
 

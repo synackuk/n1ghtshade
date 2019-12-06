@@ -157,24 +157,32 @@ int download_to_file(const char* url, const char* filename, int enable_progress)
 	return res;
 }
 
-int download_firmware_component(char* ipsw_url, char* component_path, char** out_buf, size_t* component_len) {
+int download_firmware_component_to_path(char* ipsw_url, char* component_path, char* out_path) {
 	int ret;
-#ifdef WIN32
-	char tmp_path[512];
-	char tmp_file_path[512];
-	GetTempPath(512, tmp_file_path);
-	GetTempFileName(tmp_file_path, "comp", 0, tmp_path);
-#else
-	char* tmp_path = "/tmp/component";
-#endif
 	fragmentzip_t *ipsw = fragmentzip_open(ipsw_url);
 	if (!ipsw) {
 		return -1;
 	}
-	ret = fragmentzip_download_file(ipsw, component_path, tmp_path, NULL);
+	ret = fragmentzip_download_file(ipsw, component_path, out_path, NULL);
 	
 	fragmentzip_close(ipsw);
 	
+	if(ret != 0) {
+		return -1;
+	}
+	return 0;
+
+}
+
+int download_firmware_component(char* ipsw_url, char* component_path, char** out_buf, size_t* component_len) {
+	int ret;
+	char* tmp_path = get_temp_filename("comp");
+	if (!tmp_path) {
+		tmp_path = strdup("comp.tmp");
+		error("WARNING: Could not generate temporary filename, using %s in current directory\n", tmp_path);
+	}
+
+	ret = download_firmware_component_to_path(ipsw_url, component_path, tmp_path);
 	if(ret != 0) {
 		return -1;
 	}
@@ -192,12 +200,12 @@ int download_firmware_component(char* ipsw_url, char* component_path, char** out
 	}
 	ret = fread(*out_buf, 1, *component_len, f);
 	fclose(f);
-	if(ret != *component_len) {
-		free(*out_buf);
-		*out_buf = NULL;
-		*component_len = 0;
-		return -1;
-	}
+	//if(ret != *component_len) {
+	//	free(*out_buf);
+	//	*out_buf = NULL;
+	//	*component_len = 0;
+	//	return -1;
+	//}
 	unlink(tmp_path);
 	return 0;
 }

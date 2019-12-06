@@ -1,5 +1,5 @@
-#ifndef TETHEREDBOOTVIEW_H
-#define TETHEREDBOOTVIEW_H
+#ifndef TETHERED_BOOT_VIEW_H
+#define TETHERED_BOOT_VIEW_H
 #import <Cocoa/Cocoa.h>
 
 NSWindow* window;

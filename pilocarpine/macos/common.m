@@ -60,3 +60,16 @@ NSButton* create_button(NSString* title, int x, int y, int width, int height, NS
 	[view addSubview:btn]; 
 	return btn;
 }
+
+NSTextField* create_label(NSString* title, int x, int y, int width, int height, NSView* view) {
+	NSTextField* label = [[NSTextField alloc] initWithFrame:NSMakeRect(x, y, width, height)];
+	[label setStringValue:title];
+	[label setBezeled:NO];
+	[label setBordered:NO];
+	[label setDrawsBackground:NO];
+	[label setEditable:NO];
+	[label setSelectable:NO];
+	[label setAlignment:NSTextAlignmentCenter];
+	[view addSubview:label];
+	return label;
+}

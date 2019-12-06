@@ -17,9 +17,40 @@
 exploit_list* exploits = NULL;
 libloader_device_t dev = NULL;
 belladonna_log_cb belladonna_log = NULL;
+belladonna_prog_cb belladonna_prog = NULL;
 
 static void default_log_cb(char* msg) {
 	printf("%s", msg);
+}
+
+static void default_prog_cb(unsigned int progress) {
+	int i = 0;
+
+	if(progress < 0) {
+		return;
+	}
+
+	if(progress > 100) {
+		progress = 100;
+	}
+
+	printf("\r[");
+
+	for(i = 0; i < 50; i++) {
+		if(i < progress / 2) {
+			printf("=");
+		} else {
+			printf(" ");
+		}
+	}
+
+	printf("] %3.1d%%", progress);
+
+	fflush(stdout);
+
+	if(progress == 100) {
+		printf("\n");
+	}
 }
 
 static void exploit_add(char* name, exploit_supported supported, exploit_func exploit) {
@@ -68,6 +99,10 @@ void libbelladonna_set_log_cb(belladonna_log_cb new_cb) {
 	belladonna_log = new_cb;
 }
 
+void libbelladonna_set_prog_cb(belladonna_prog_cb new_cb) {
+	belladonna_prog = new_cb;
+}
+
 void libbelladonna_init() {
 #ifdef __APPLE__
 	system("killall -9 iTunesHelper 2> /dev/null");
@@ -75,6 +110,7 @@ void libbelladonna_init() {
 	libloader_init();
 	exploits_init();
 	libbelladonna_set_log_cb(&default_log_cb);
+	libbelladonna_set_prog_cb(&default_prog_cb);
 }
 
 void libbelladonna_exit() {
@@ -94,13 +130,11 @@ int libbelladonna_get_device() {
 	if(!dev) {
 		return -1;
 	}
-	return 0;
-}
 
-int libbelladonna_exploit_for_mode() {
 	if(!libloader_is_dfu(dev)) {
 		return -1;
 	}
+
 	return 0;
 }
 
@@ -155,7 +189,7 @@ static int download_firmware_component(char* ipsw_url, char* component_path, cha
 		error("failed to open ipsw.");
 		return -1;
 	}
-	ret = fragmentzip_download_file(ipsw, component_path, tmp_path, NULL);
+	ret = fragmentzip_download_file(ipsw, component_path, tmp_path, belladonna_prog);
 	
 	fragmentzip_close(ipsw);
 	
@@ -537,16 +571,10 @@ int libbelladonna_restore_ipsw(char* path) {
 		error("Device isn't in recovery mode.");
 		return -1;
 	}
-	LOG("Patching Kernel\n");
-	ret = libloader_send_cmd(dev, "atropine patch krnl");
-	if(ret != 0) {
-		error("Failed to patch kernelcache.");
-		return -1;
-	}
 	libloader_close(dev);
 	dev = NULL;
-
-	libloader_close(dev);
+	LOG("Restoring device\n");
+	
 	struct idevicerestore_client_t* client = idevicerestore_client_new();
 	if (!client) {
 		error("Failed to create restore client.");
@@ -555,6 +583,7 @@ int libbelladonna_restore_ipsw(char* path) {
 	client->flags |= FLAG_ERASE;
 	client->flags |= FLAG_LATEST_SHSH;
 	client->flags |= FLAG_NO_IBEC_UPLOAD;
+	client->flags |= FLAG_LATEST_BASEBAND;
 	client->flags &= ~FLAG_INTERACTIVE;
 	client->ipsw = strdup(path);
 	int result = idevicerestore_start(client);
@@ -565,8 +594,4 @@ int libbelladonna_restore_ipsw(char* path) {
 	idevicerestore_client_free(client);
 	
 	return 0;
-}
-
-char* libbelladonna_get_identifier() {
-	return libloader_get_identifier(dev);
 }

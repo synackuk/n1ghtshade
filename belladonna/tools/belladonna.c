@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	libbelladonna_init();
-	while(libbelladonna_get_device() != 0 || libbelladonna_exploit_for_mode() != 0) {
+	while(libbelladonna_get_device() != 0) {
 		printf("Waiting for device in DFU mode\n");
 		sleep(1);
 	}

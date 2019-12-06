@@ -6,7 +6,6 @@
 #include <modules/hacktivate.h>
 #include <modules/jb_init.h>
 
-
 #define INSTALL_N1GHTSHADE_APP
 #define JB_INIT
 #define PATCH_FSTAB

@@ -33,6 +33,7 @@
 #include <libirecovery.h>
 
 #include "idevicerestore.h"
+#include "download.h"
 #include "asr.h"
 #include "fdr.h"
 #include "fls.h"
@@ -916,6 +917,9 @@ int restore_send_component(restored_client_t restore, struct idevicerestore_clie
 
 int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* client, plist_t build_identity)
 {
+	int ret;
+	char* ipsw_url = NULL;
+	char* loader_identity = NULL;
 	char* llb_path = NULL;
 	char* llb_filename = NULL;
 	char* sep_path = NULL;
@@ -1020,13 +1024,75 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 	const char* component = "LLB";
 	unsigned char* component_data = NULL;
 	unsigned int component_size = 0;
-	int ret = extract_component(client->ipsw, llb_path, &component_data, &component_size);
-	free(llb_path);
-	if (ret < 0) {
-		error("ERROR: Unable to extract component: %s\n", component);
-		return -1;
-	}
 
+	if(client->flags & FLAG_LATEST_SHSH) {
+		plist_t signed_fws;
+		int ret = ipsw_get_signed_firmwares(client->device->product_type, &signed_fws);
+		if (ret < 0) {
+			error("ERROR: Could not fetch list of signed firmwares.\n");
+			return ret;
+		}
+		uint32_t count = plist_array_get_size(signed_fws);
+		if (count == 0) {
+			plist_free(signed_fws);
+			error("ERROR: No firmwares are currently being signed for %s (REALLY?!)\n", client->device->product_type);
+			return -1;
+		}
+		plist_t latest_version = plist_array_get_item(signed_fws, 0);
+		plist_t plist_ipsw_url = plist_dict_get_item(latest_version, "url");
+		plist_get_string_val(plist_ipsw_url, &ipsw_url);
+		
+		char* tss_manifest_buf = NULL;
+		size_t tss_manifest_len = 0;
+		ret = download_firmware_component(ipsw_url, "BuildManifest.plist", &tss_manifest_buf, &tss_manifest_len);
+		if (ret < 0) {
+			error("ERROR: Could not fetch latest BuildManifest.\n");
+			return ret;
+		}
+		plist_t tss_manifest = NULL;
+		plist_from_xml(tss_manifest_buf, tss_manifest_len, &tss_manifest);
+		if(!tss_manifest) {
+			error("ERROR: Could not parse latest BuildManifest.\n");
+			return -1;
+		}
+		if (client->flags & FLAG_ERASE) {
+			loader_identity = build_manifest_get_build_identity_for_model_with_restore_behavior(tss_manifest, client->device->hardware_model, "Erase");
+			if (loader_identity == NULL) {
+				error("ERROR: Unable to find any build identities\n");
+				plist_free(tss_manifest);
+				return -1;
+			}
+		} 
+		else {
+			loader_identity = build_manifest_get_build_identity_for_model_with_restore_behavior(tss_manifest, client->device->hardware_model, "Update");
+			if (!loader_identity) {
+				loader_identity = build_manifest_get_build_identity_for_model(tss_manifest, client->device->hardware_model);
+			}
+		}
+		free(tss_manifest);
+		free(tss_manifest_buf);
+
+		if (build_identity_get_component_path(loader_identity, "LLB", &llb_path) < 0) {
+			error("ERROR: Unable to get component path for LLB\n");
+			return -1;
+		}
+
+		ret = download_firmware_component(ipsw_url, llb_path, (char **)&component_data, (size_t*)&component_size);
+		if (ret < 0) {
+			error("ERROR: Could not fetch latest LLB.\n");
+			return ret;
+		}
+	}
+	else {
+		int ret = extract_component(client->ipsw, llb_path, &component_data, &component_size);
+		free(llb_path);
+		if (ret < 0) {
+			error("ERROR: Unable to extract component: %s\n", component);
+			return -1;
+		}
+
+	}
+	
 	ret = personalize_component(component, component_data, component_size, client->tss, &llb_data, &llb_size);
 	free(component_data);
 	component_data = NULL;
@@ -1035,7 +1101,7 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 		error("ERROR: Unable to get personalized component: %s\n", component);
 		return -1;
 	}
-
+	
 	dict = plist_new_dict();
 	plist_dict_set_item(dict, "LlbImageData", plist_new_data((char*)llb_data, (uint64_t) llb_size));
 	free(llb_data);
@@ -1070,13 +1136,27 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 		component_data = NULL;
 		unsigned int component_size = 0;
 
-		if (extract_component(client->ipsw, comppath, &component_data, &component_size) < 0) {
-			free(iter);
-			free(comp);
-			free(comppath);
-			plist_free(firmware_files);
-			error("ERROR: Unable to extract component: %s\n", component);
-			return -1;
+		if(!strcmp(component, "iBoot") && (client->flags & FLAG_LATEST_SHSH)) {
+			if (build_identity_get_component_path(loader_identity, "iBoot", &llb_path) < 0) {
+				error("ERROR: Unable to get component path for iBoot\n");
+				return -1;
+			}
+	
+			ret = download_firmware_component(ipsw_url, llb_path, (char**)&component_data, (size_t*)&component_size);
+			if (ret < 0) {
+				error("ERROR: Could not fetch latest iBoot.\n");
+				return ret;
+			}
+		}
+		else {
+			if (extract_component(client->ipsw, comppath, &component_data, &component_size) < 0) {
+				free(iter);
+				free(comp);
+				free(comppath);
+				plist_free(firmware_files);
+				error("ERROR: Unable to extract component: %s\n", component);
+				return -1;
+			}
 		}
 
 		if (personalize_component(component, component_data, component_size, client->tss, &nor_data, &nor_size) < 0) {
@@ -1098,9 +1178,7 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 		} else {
 			plist_array_append_item(norimage_array, plist_new_data((char*)nor_data, (uint64_t)nor_size));
 		}
-
 		free(comp);
-		free(comppath);
 		free(nor_data);
 		nor_data = NULL;
 		nor_size = 0;
@@ -1113,7 +1191,7 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 	unsigned int personalized_size = 0;
 
 	if (build_identity_has_component(build_identity, "RestoreSEP") &&
-	    build_identity_get_component_path(build_identity, "RestoreSEP", &restore_sep_path) == 0) {
+		build_identity_get_component_path(build_identity, "RestoreSEP", &restore_sep_path) == 0) {
 		component = "RestoreSEP";
 		ret = extract_component(client->ipsw, restore_sep_path, &component_data, &component_size);
 		free(restore_sep_path);
@@ -1138,7 +1216,7 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 	}
 
 	if (build_identity_has_component(build_identity, "SEP") &&
-	    build_identity_get_component_path(build_identity, "SEP", &sep_path) == 0) {
+		build_identity_get_component_path(build_identity, "SEP", &sep_path) == 0) {
 		component = "SEP";
 		ret = extract_component(client->ipsw, sep_path, &component_data, &component_size);
 		free(sep_path);
@@ -1564,6 +1642,7 @@ int restore_send_baseband_data(restored_client_t restore, struct idevicerestore_
 	char* buffer = NULL;
 	char* bbfwtmp = NULL;
 	plist_t dict = NULL;
+	char* ipsw_url = NULL;
 
 	info("About to send BasebandData...\n");
 
@@ -1590,6 +1669,56 @@ int restore_send_baseband_data(restored_client_t restore, struct idevicerestore_
 		}
 	}
 
+	if(client->flags & FLAG_LATEST_BASEBAND) {
+		int ret;
+		plist_t signed_fws;
+		ret = ipsw_get_signed_firmwares(client->device->product_type, &signed_fws);
+		if (ret < 0) {
+			error("ERROR: Could not fetch list of signed firmwares.\n");
+			return ret;
+		}
+		uint32_t count = plist_array_get_size(signed_fws);
+		if (count == 0) {
+			plist_free(signed_fws);
+			error("ERROR: No firmwares are currently being signed for %s (REALLY?!)\n", client->device->product_type);
+			return -1;
+		}
+		plist_t latest_version = plist_array_get_item(signed_fws, 0);
+		plist_t plist_ipsw_url = plist_dict_get_item(latest_version, "url");
+		plist_get_string_val(plist_ipsw_url, &ipsw_url);
+
+		char* tss_manifest_buf = NULL;
+		size_t tss_manifest_len = 0;
+		ret = download_firmware_component(ipsw_url, "BuildManifest.plist", &tss_manifest_buf, &tss_manifest_len);
+		if (ret < 0) {
+			error("ERROR: Could not fetch latest BuildManifest.\n");
+			return ret;
+		}
+		plist_t tss_manifest = NULL;
+		plist_from_xml(tss_manifest_buf, tss_manifest_len, &tss_manifest);
+		if(!tss_manifest) {
+			error("ERROR: Could not parse latest BuildManifest.\n");
+			return -1;
+		}
+		if (client->flags & FLAG_ERASE) {
+			build_identity = build_manifest_get_build_identity_for_model_with_restore_behavior(tss_manifest, client->device->hardware_model, "Erase");
+			if (build_identity == NULL) {
+				error("ERROR: Unable to find any build identities\n");
+				plist_free(tss_manifest);
+				return -1;
+			}
+		}
+		else {
+			build_identity = build_manifest_get_build_identity_for_model_with_restore_behavior(tss_manifest, client->device->hardware_model, "Update");
+			if (!build_identity) {
+				build_identity = build_manifest_get_build_identity_for_model(tss_manifest, client->device->hardware_model);
+			}
+		}
+		free(tss_manifest);
+		free(tss_manifest_buf);
+
+	}
+
 	if ((bb_nonce == NULL) || (client->restore->bbtss == NULL)) {
 		/* populate parameters */
 		plist_t parameters = plist_new_dict();
@@ -1597,12 +1726,17 @@ int restore_send_baseband_data(restored_client_t restore, struct idevicerestore_
 		if (bb_nonce) {
 			plist_dict_set_item(parameters, "BbNonce", plist_new_data((const char*)bb_nonce, bb_nonce_size));
 		}
+
+		else {
+			info("sending request without baseband nonce\n");
+		}
+
 		plist_dict_set_item(parameters, "BbChipID", plist_new_uint(bb_chip_id));
 		plist_dict_set_item(parameters, "BbGoldCertId", plist_new_uint(bb_cert_id));
 		plist_dict_set_item(parameters, "BbSNUM", plist_new_data((const char*)bb_snum, bb_snum_size));
 
 		tss_parameters_add_from_manifest(parameters, build_identity);
-
+	
 		/* create baseband request */
 		plist_t request = tss_request_new(NULL);
 		if (request == NULL) {
@@ -1611,10 +1745,22 @@ int restore_send_baseband_data(restored_client_t restore, struct idevicerestore_
 			return -1;
 		}
 
-		/* add baseband parameters */
 		tss_request_add_common_tags(request, parameters, NULL);
-		tss_request_add_baseband_tags(request, parameters, NULL);
+		//tss_request_add_ap_tags(request, parameters, NULL);
 
+
+		//we don't want an apticket
+		if (client->image4supported) {
+			plist_dict_set_item(request, "@ApImg4Ticket", plist_new_bool(0));
+		}
+		else {
+			plist_dict_set_item(request, "@APTicket", plist_new_bool(0));
+		}
+	
+		/* add baseband parameters */
+
+		tss_request_add_baseband_tags(request, parameters, NULL);
+	
 		plist_t node = plist_access_path(build_identity, 2, "Info", "FDRSupport");
 		if (node && plist_get_node_type(node) == PLIST_BOOLEAN) {
 			uint8_t b = 0;
@@ -1626,7 +1772,7 @@ int restore_send_baseband_data(restored_client_t restore, struct idevicerestore_
 		}
 		if (idevicerestore_debug)
 			debug_plist(request);
-
+	
 		info("Sending Baseband TSS request...\n");
 		response = tss_request_send(request, client->tss_url);
 		plist_free(request);
@@ -1636,39 +1782,70 @@ int restore_send_baseband_data(restored_client_t restore, struct idevicerestore_
 			return -1;
 		}
 		info("Received Baseband SHSH blobs\n");
-
-		if (idevicerestore_debug)
-			debug_plist(response);
 	}
+
+	if (idevicerestore_debug)
+		debug_plist(response);
 
 	// get baseband firmware file path from build identity
-	plist_t bbfw_path = plist_access_path(build_identity, 4, "Manifest", "BasebandFirmware", "Info", "Path");
-	if (!bbfw_path || plist_get_node_type(bbfw_path) != PLIST_STRING) {
-		error("ERROR: Unable to get BasebandFirmware/Info/Path node\n");
-		plist_free(response);
-		return -1;
+	if(client->flags & FLAG_LATEST_BASEBAND) {
+		plist_t bbfw_path = plist_access_path(build_identity, 4, "Manifest", "BasebandFirmware", "Info", "Path");
+		if (!bbfw_path || plist_get_node_type(bbfw_path) != PLIST_STRING) {
+			error("ERROR: Unable to get BasebandFirmware/Info/Path node\n");
+			plist_free(response);
+			return -1;
+		}
+		char* bbfwpath = NULL;
+		plist_get_string_val(bbfw_path, &bbfwpath);	
+		if (!bbfwpath) {
+			error("ERROR: Unable to get baseband path\n");
+			plist_free(response);
+			return -1;
+		}
+		bbfwtmp = get_temp_filename("bbfw_");
+		if (!bbfwtmp) {
+			size_t l = strlen(client->udid);
+			bbfwtmp = malloc(l + 10);
+			strcpy(bbfwtmp, "bbfw_");
+			strncpy(bbfwtmp + 5, client->udid, l);
+			strcpy(bbfwtmp + 5 + l, ".tmp");
+			error("WARNING: Could not generate temporary filename, using %s in current directory\n", bbfwtmp);
+		}
+		int ret = download_firmware_component_to_path(ipsw_url, bbfwpath, bbfwtmp);
+		if(ret != 0) {
+			error("ERROR: Failed to get latest baseband\n");
+			return -1;
+		}
 	}
-	char* bbfwpath = NULL;
-	plist_get_string_val(bbfw_path, &bbfwpath);	
-	if (!bbfwpath) {
-		error("ERROR: Unable to get baseband path\n");
-		plist_free(response);
-		return -1;
-	}
-
-	// extract baseband firmware to temp file
-	bbfwtmp = get_temp_filename("bbfw_");
-	if (!bbfwtmp) {
-		size_t l = strlen(client->udid);
-		bbfwtmp = malloc(l + 10);
-		strcpy(bbfwtmp, "bbfw_");
-		strncpy(bbfwtmp + 5, client->udid, l);
-		strcpy(bbfwtmp + 5 + l, ".tmp");
-		error("WARNING: Could not generate temporary filename, using %s in current directory\n", bbfwtmp);
-	}
-	if (ipsw_extract_to_file(client->ipsw, bbfwpath, bbfwtmp) != 0) {
-		error("ERROR: Unable to extract baseband firmware from ipsw\n");
-		goto leave;
+	else {
+		plist_t bbfw_path = plist_access_path(build_identity, 4, "Manifest", "BasebandFirmware", "Info", "Path");
+		if (!bbfw_path || plist_get_node_type(bbfw_path) != PLIST_STRING) {
+			error("ERROR: Unable to get BasebandFirmware/Info/Path node\n");
+			plist_free(response);
+			return -1;
+		}
+		char* bbfwpath = NULL;
+		plist_get_string_val(bbfw_path, &bbfwpath);	
+		if (!bbfwpath) {
+			error("ERROR: Unable to get baseband path\n");
+			plist_free(response);
+			return -1;
+		}
+	
+		// extract baseband firmware to temp file
+		bbfwtmp = get_temp_filename("bbfw_");
+		if (!bbfwtmp) {
+			size_t l = strlen(client->udid);
+			bbfwtmp = malloc(l + 10);
+			strcpy(bbfwtmp, "bbfw_");
+			strncpy(bbfwtmp + 5, client->udid, l);
+			strcpy(bbfwtmp + 5 + l, ".tmp");
+			error("WARNING: Could not generate temporary filename, using %s in current directory\n", bbfwtmp);
+		}
+		if (ipsw_extract_to_file(client->ipsw, bbfwpath, bbfwtmp) != 0) {
+			error("ERROR: Unable to extract baseband firmware from ipsw\n");
+			goto leave;
+		}
 	}
 
 	if (bb_nonce && !client->restore->bbtss) {
@@ -2668,9 +2845,9 @@ int restore_device(struct idevicerestore_client_t* client, plist_t build_identit
 		plist_free(hwinfo);
 	}
 
-	if (plist_dict_get_item(client->tss, "BBTicket")) {
-		client->restore->bbtss = plist_copy(client->tss);
-	}
+	//if (plist_dict_get_item(client->tss, "BBTicket")) {
+	//	client->restore->bbtss = plist_copy(client->tss);
+	//}
 
 	fdr_client_t fdr_control_channel = NULL;
 	info("Starting FDR listener thread\n");

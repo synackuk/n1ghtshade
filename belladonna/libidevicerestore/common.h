@@ -24,8 +24,6 @@
 #ifndef IDEVICERESTORE_COMMON_H
 #define IDEVICERESTORE_COMMON_H
 
-#define PACKAGE_VERSION "1.0"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -33,6 +31,8 @@ extern "C" {
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#define PACKAGE_VERSION "1.0"
 
 #include <unistd.h>
 

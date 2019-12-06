@@ -13,6 +13,7 @@ all: launchd
 
 clean:
 	@$(RM) -rf *.o
+	@$(RM) -rf modules/*.o
 	@$(RM) -rf launchd
 
 launchd: $(OBJECTS)

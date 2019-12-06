@@ -5,5 +5,6 @@
 
 void create_menus();
 NSButton* create_button(NSString* title, int x, int y, int width, int height, NSObject* callback, SEL selector, NSView* view);
+NSTextField* create_label(NSString* title, int x, int y, int width, int height, NSView* view);
 
 #endif
