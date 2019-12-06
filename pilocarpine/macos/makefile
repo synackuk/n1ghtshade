@@ -16,7 +16,7 @@ n1ghtshade.app: $(OBJECTS)
 	@echo Building $(@)
 	@$(CC) $(LDFLAGS) $(LIBRARIES) $(FRAMEWORKS) -o n1ghtshade.app/Contents/MacOS/n1ghtshade $(OBJECTS)
 	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib @loader_path/../Frameworks/libcrypto.1.0.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
-	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/libzip/lib/libzip.5.dylib @loader_path/../Frameworks/libzip.5.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
+	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/libzip/lib/libzip.5.dylib @loader_path/../Frameworks/libzip.5.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/lib/libplist.3.dylib @loader_path/../Frameworks/libplist.3.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/libfragmentzip/lib/libfragmentzip.0.dylib @loader_path/../Frameworks/libfragmentzip.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change @@HOMEBREW_PREFIX@@/opt/libusb/lib/libusb-1.0.0.dylib @loader_path/../Frameworks/libusb-1.0.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade

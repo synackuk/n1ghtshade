@@ -116,6 +116,7 @@ void libbelladonna_init() {
 void libbelladonna_exit() {
 	if(dev){
 		libloader_close(dev);
+		dev = NULL;
 	}
 	libloader_exit();
 	exploits_exit();
@@ -572,7 +573,7 @@ int libbelladonna_restore_ipsw(char* path) {
 		return -1;
 	}
 	libloader_close(dev);
-	dev = NULL;
+
 	LOG("Restoring device\n");
 	
 	struct idevicerestore_client_t* client = idevicerestore_client_new();
