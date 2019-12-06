@@ -11,7 +11,7 @@
 #### Beta 1 Caveats
 
 * Currently cannot jailbreak iOS 8 and up
-* Mac only; Works on mac os mojave and up
+* Mac only; Works on macOS mojave and up
 
 #### Download
 
