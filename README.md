@@ -22,6 +22,14 @@
 * Please report any bugs in the [github issues](https://github.com/synackuk/n1ghtshade/issues), or to me on twitter [(@synackuk)](https://twitter.com/synackuk)
 * You can get help from me on Twitter also
 
+#### Layout
+
+* atropine - iBoot payload
+* belladonna - Injector - responsible for loading checkm8, tethered boot etc.
+* hyoscine - jailbreak ramdisk
+* physostigmine - Jailbreak ramdisk modules (fstab patcher, hacktivation, etc).
+* pilocarpine - interfaces
+
 #### Credits
 
 * Thanks to [axi0mX](https://github.com/axi0mX) for [checkm8](https://github.com/axi0mX/ipwndfu)
