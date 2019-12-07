@@ -105,6 +105,9 @@ libloader_device_t libloader_get_device_handle() {
 			break;
 		}
 	}
+	if(usb_dev == NULL) {
+		return NULL;
+	}
 	dev->mode = desc.idProduct;
 	ret = libusb_open(usb_dev, &dev->dev);
 	if(ret != 0){
