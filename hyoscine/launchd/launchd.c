@@ -7,7 +7,7 @@ int console;
 char* fsck_system_args[] = { "/sbin/fsck_hfs", "-fy", "/dev/rdisk0s1s1", NULL };
 char* fsck_user_args[] = { "/sbin/fsck_hfs", "-fy", "/dev/rdisk0s1s2", NULL };
 
-__attribute__((noreturn)) void done() {
+__attribute__((noreturn)) void done(int should_reboot) {
 	sync();
 	puts("Unmounting filesystem\n");
 	rmdir("/mnt/private/var2");
@@ -16,9 +16,11 @@ __attribute__((noreturn)) void done() {
 	unmount("/mnt", 0);
 	puts("Flushing buffers\n");
 	sync();
+	if(should_reboot) {
 	puts("Rebooting\n");
 	close(console);
 	reboot(1);
+	}
 	while(1){}
 }
 
@@ -42,7 +44,7 @@ int main(int argc, char** argv, char** env) {
 	ret = hfs_mount("/dev/disk0s1s1", "/mnt", MNT_ROOTFS | MNT_RDONLY);
 	if(ret != 0) {
 		puts("Failed to mount filesystem r/o\n");
-		done();
+		done(0);
 	}
 
 	puts("Mounting dev filesystem\n");
@@ -50,7 +52,7 @@ int main(int argc, char** argv, char** env) {
 	ret = mount("devfs", "/mnt/dev", 0, NULL);
 	if(ret != 0) {
 		puts("Failed to mount dev filesystem\n");
-		done();
+		done(0);
 	}
 
 	puts("Checking filesystem\n");
@@ -58,7 +60,7 @@ int main(int argc, char** argv, char** env) {
 	ret = fsexec(fsck_system_args, cache_env, 1);
 	if(ret != 0) {
 		puts("Failed to check filesystem\n");
-		done();
+		done(0);
 	}
 
 	puts("Mounting filesystem r/w\n");
@@ -66,7 +68,7 @@ int main(int argc, char** argv, char** env) {
 	ret = hfs_mount("/dev/disk0s1s1", "/mnt", MNT_ROOTFS | MNT_UPDATE);
 	if(ret != 0) {
 		puts("Failed to mount filesystem r/w\n");
-		done();
+		done(0);
 	}
 
 	puts("Checking user filesystem\n");
@@ -74,7 +76,7 @@ int main(int argc, char** argv, char** env) {
 	ret = fsexec(fsck_user_args, cache_env, 1);
 	if(ret != 0) {
 		puts("Failed to check filesystem\n");
-		done();
+		done(0);
 	}
 
 	mkdir("/mnt/private/var2", 0755);
@@ -83,7 +85,7 @@ int main(int argc, char** argv, char** env) {
 
 	if (hfs_mount("/dev/disk0s1s2", "/mnt/private/var2", 0) != 0) {
 		puts("Failed to mount user filesystem\n");
-		done();
+		done(0);
 	}
 
 
@@ -92,12 +94,12 @@ int main(int argc, char** argv, char** env) {
 	ret = install_physostigmine();
 	if(ret != 0) {
 		puts("Failed to install physostigmine\n");
-		done();
+		done(0);
 	}
 
 	puts("Installed physostigmine\n");
 
-	done();
+	done(1);
 
 	return 0;
 }
