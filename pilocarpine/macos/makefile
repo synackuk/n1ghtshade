@@ -19,7 +19,7 @@ n1ghtshade.app: $(OBJECTS)
 	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/libzip/lib/libzip.5.dylib @loader_path/../Frameworks/libzip.5.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/lib/libplist.3.dylib @loader_path/../Frameworks/libplist.3.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/libfragmentzip/lib/libfragmentzip.0.dylib @loader_path/../Frameworks/libfragmentzip.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
-	@$(INSTALL_NAME_TOOL) -change @@HOMEBREW_PREFIX@@/opt/libusb/lib/libusb-1.0.0.dylib @loader_path/../Frameworks/libusb-1.0.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
+	@$(INSTALL_NAME_TOOL) -change /usr/local/opt/libusb/lib/libusb-1.0.0.dylib @loader_path/../Frameworks/libusb-1.0.0.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/lib/libirecovery.2.dylib @loader_path/../Frameworks/libirecovery.2.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@$(INSTALL_NAME_TOOL) -change /usr/local/lib/libimobiledevice.6.dylib @loader_path/../Frameworks/libimobiledevice.6.dylib n1ghtshade.app/Contents/MacOS/n1ghtshade
 	@echo STRIP n1ghtshade.app/Contents/MacOS/n1ghtshade

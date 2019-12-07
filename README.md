@@ -30,6 +30,19 @@
 * physostigmine - Jailbreak ramdisk modules (fstab patcher, hacktivation, etc).
 * pilocarpine - interfaces
 
+#### Dependencies
+
+* Most of these can be installed with homebrew
+* arm-elf-gcc (you can install with macports)
+* [bin2c](https://github.com/gwilymk/bin2c) in the path
+* libcrypto
+* libzip
+* libplist
+* libusb
+* libirecovery
+* libimobiledevice
+* theos
+
 #### Credits
 
 * Thanks to [axi0mX](https://github.com/axi0mX) for [checkm8](https://github.com/axi0mX/ipwndfu)
