@@ -418,7 +418,7 @@ int libbelladonna_enter_recovery() {
 		error("Failed to boot iBSS.");
 		return -1;
 	}
-	dev = libloader_reconnect(dev, 2);
+	dev = libloader_reconnect(dev, 5);
 	if(!dev) {
 		error("Failed to reconnect to device.");
 		return -1;
@@ -428,7 +428,7 @@ int libbelladonna_enter_recovery() {
 		error("Failed to boot iBEC.");
 		return -1;
 	}
-	dev = libloader_reconnect(dev, 2);
+	dev = libloader_reconnect(dev, 5);
 	if(!dev) {
 		error("Failed to boot iBEC.");
 		return -1;
