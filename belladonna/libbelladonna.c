@@ -573,6 +573,7 @@ int libbelladonna_restore_ipsw(char* path) {
 		return -1;
 	}
 	libloader_close(dev);
+	dev = NULL;
 
 	LOG("Restoring device\n");
 	
