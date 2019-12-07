@@ -25,8 +25,8 @@ int patch_command(int argc, command_args* argv) {
 	if(!strcmp(argv[1].string, "ibot")){
 		char boot_args[255];
 		for(int i = 2; i < argc; i++) {
-			strncat(boot_args, argv[i].string, 255);
-			strncat(boot_args, " ", 255);
+			strncat(boot_args, argv[i].string, 254);
+			strncat(boot_args, " ", 254);
 		}
 		patch_iboot((char*)load_address, get_env_uint("filesize"), boot_args);
 	}
@@ -67,7 +67,7 @@ int load_command(int argc, command_args* argv) {
 }
 
 int boot_args_command(int argc, command_args* argv) {
-	char boot_args[255];
+	char boot_args[256];
 	for(int i = 1; i < argc; i++) {
 		strncat(boot_args, argv[i].string, 255);
 		strncat(boot_args, " ", 255);
