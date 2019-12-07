@@ -29,3 +29,4 @@
 * Thanks to [xerub](https://github.com/xerub) for [ibex](https://github.com/xerub/ibex)
 * Thanks to [iH8Sn0w](https://github.com/ih8sn0w), [tihmstar](https://github.com/tihmstar), [nyan_satan](https://github.com/nyan_satan) for [iBoot32Patcher](https://github.com/NyanSatan/iBoot32Patcher)
 * Thanks to [libimobiledevice](https://github.com/libimobiledevice/) for [idevicerestore](https://github.com/libimobiledevice/idevicerestore)
+* Thanks to [RealiMuseum](https://twitter.com/RealiMuseum) for testing
