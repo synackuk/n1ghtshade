@@ -140,7 +140,7 @@ int libloader_reset(libloader_device_t dev) {
 
 int libloader_get_status(libloader_device_t dev) {
 	unsigned char buf[6];
-	int ret = libloader_ctrl_transfer(dev, 0xA1, 3, 0, 0, buf, 6, 1000);
+	int ret = libloader_ctrl_transfer(dev, 0xA1, 3, 0, 0, buf, 6, USB_TIMEOUT);
 	if(ret < 0){
 		return -1;
 	}
@@ -149,7 +149,7 @@ int libloader_get_status(libloader_device_t dev) {
 
 int libloader_request_image_validation(libloader_device_t dev) {
 	int ret;
-	libloader_ctrl_transfer(dev, 0x21, 1, 0, 0, 0, 0, 1000);
+	libloader_ctrl_transfer(dev, 0x21, 1, 0, 0, 0, 0, USB_TIMEOUT);
 	for(int i = 0; i < 3; i++) {
 		ret = libloader_get_status(dev);
 		if(ret != 0) {
@@ -181,7 +181,7 @@ int libloader_send_buffer(libloader_device_t dev, unsigned char* buf, size_t len
 			}
 			if (i+1 == packets) {
 				if (size+16 > packet_size) {
-					ret = libloader_ctrl_transfer(dev, 0x21, 1, i, 0, &buf[i * packet_size], size, 1000);
+					ret = libloader_ctrl_transfer(dev, 0x21, 1, i, 0, &buf[i * packet_size], size, USB_TIMEOUT);
 					if (ret != size) {
 						return -1;
 					}
@@ -204,13 +204,13 @@ int libloader_send_buffer(libloader_device_t dev, unsigned char* buf, size_t len
 				newbuf[size+14] = (h1 >> 16) & 0xFF;
 				newbuf[size+15] = (h1 >> 24) & 0xFF;
 				size += 16;
-				ret = libloader_ctrl_transfer(dev, 0x21, 1, 0, 0, (unsigned char*) newbuf, size, 1000);
+				ret = libloader_ctrl_transfer(dev, 0x21, 1, 0, 0, (unsigned char*) newbuf, size, USB_TIMEOUT);
 				if(ret != size) {
 					return -1;
 				}
 				free(newbuf);
 			} else {
-				ret = libloader_ctrl_transfer(dev, 0x21, 1, 0, 0, &buf[i * packet_size], size, 1000);
+				ret = libloader_ctrl_transfer(dev, 0x21, 1, 0, 0, &buf[i * packet_size], size, USB_TIMEOUT);
 				if(ret != size) {
 					return -1;
 				}
@@ -218,11 +218,11 @@ int libloader_send_buffer(libloader_device_t dev, unsigned char* buf, size_t len
 		}
 	}
 	else {
-		libloader_ctrl_transfer(dev, 0x41, 0, 0, 0, NULL, 0, 1000);
+		libloader_ctrl_transfer(dev, 0x41, 0, 0, 0, NULL, 0, USB_TIMEOUT);
 		for (int i = 0; i < packets; i++) {
 			int bytes;
 			int size = (i + 1) < packets ? packet_size : last;
-			ret = libloader_bulk_transfer(dev, 0x04, &buf[i * packet_size], size, &bytes, 1000);
+			ret = libloader_bulk_transfer(dev, 0x04, &buf[i * packet_size], size, &bytes, USB_TIMEOUT);
 			if(ret != 0 || bytes != size) {
 				return -1;
 			}
@@ -263,7 +263,7 @@ static long get_nanos(void) {
 #else
 	clock_gettime(CLOCK_REALTIME, &ts);
 #endif
-	return (long)ts.tv_sec * 1000000000L + ts.tv_nsec;
+	return (long)ts.tv_sec * USB_TIMEOUT000000L + ts.tv_nsec;
 }
 
 
