@@ -572,6 +572,7 @@ int libbelladonna_restore_ipsw(char* path) {
 		error("Device isn't in recovery mode.");
 		return -1;
 	}
+	libloader_reset(dev);
 	libloader_close(dev);
 	dev = NULL;
 
@@ -588,8 +589,8 @@ int libbelladonna_restore_ipsw(char* path) {
 	client->flags |= FLAG_LATEST_BASEBAND;
 	client->flags &= ~FLAG_INTERACTIVE;
 	client->ipsw = strdup(path);
-	int result = idevicerestore_start(client);
-	if(result != 0) {
+	ret = idevicerestore_start(client);
+	if(ret != 0) {
 		error("Failed to restore device.");
 		return -1;
 	}

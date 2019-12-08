@@ -11,7 +11,7 @@
 #### Beta 1 Caveats
 
 * Currently cannot jailbreak iOS 8 and up
-* Mac only; Works on macOS mojave and up
+* Mac only; Works on macOS Sierra and up
 
 #### Download
 
@@ -47,6 +47,7 @@
 #### Credits
 
 * Thanks to [axi0mX](https://github.com/axi0mX) for [checkm8](https://github.com/axi0mX/ipwndfu)
+* Thanks to [Daniel Volt](https://github.com/DanielVolt) for A6X offsets
 * Thanks to [Chronic Dev](https://github.com/Chronic-Dev) for [greenpois0n](https://github.com/Chronic-Dev/gprc5)
 * Thanks to [xerub](https://github.com/xerub) for [ibex](https://github.com/xerub/ibex)
 * Thanks to [iH8Sn0w](https://github.com/ih8sn0w), [tihmstar](https://github.com/tihmstar), [nyan_satan](https://github.com/nyan_satan) for [iBoot32Patcher](https://github.com/NyanSatan/iBoot32Patcher)
