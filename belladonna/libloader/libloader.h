@@ -16,7 +16,7 @@
 
 #define NORMAL_MODE 0x1290
 
-#define USB_TIMEOUT 5000
+#define USB_TIMEOUT 1000
 
 typedef struct libloader_device_t{
 	libusb_device_handle* dev;

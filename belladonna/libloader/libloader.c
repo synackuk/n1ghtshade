@@ -263,7 +263,7 @@ static long get_nanos(void) {
 #else
 	clock_gettime(CLOCK_REALTIME, &ts);
 #endif
-	return (long)ts.tv_sec * USB_TIMEOUT000000L + ts.tv_nsec;
+	return (long)ts.tv_sec * 1000000000L + ts.tv_nsec;
 }
 
 
