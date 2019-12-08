@@ -51,7 +51,7 @@ uint16_t libloader_get_cpid(libloader_device_t dev) {
 	return cpid;
 }
 
-uint8_t libloader_get_bdid(libloader_device_t dev) {
+int libloader_get_bdid(libloader_device_t dev) {
 	char* bdid_ptr = strstr((char*)dev->serial, "BDID:");
 	if(!bdid_ptr) {
 		return -1;
@@ -67,7 +67,7 @@ char* libloader_get_identifier(libloader_device_t dev) {
 	if(!cpid) {
 		return NULL;
 	}
-	uint8_t bdid = libloader_get_bdid(dev);
+	int bdid = libloader_get_bdid(dev);
 	if(bdid == -1) {
 		return NULL;
 	}

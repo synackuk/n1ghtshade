@@ -36,7 +36,7 @@ int libloader_is_checkm8_dfu(libloader_device_t dev);
 int libloader_send_buffer(libloader_device_t dev, unsigned char* buf, size_t len);
 int libloader_is_pwned_dfu(libloader_device_t dev);
 uint16_t libloader_get_cpid(libloader_device_t dev);
-uint8_t libloader_get_bdid(libloader_device_t dev);
+int libloader_get_bdid(libloader_device_t dev);
 char* libloader_get_identifier(libloader_device_t dev);
 libloader_device_t libloader_get_device_handle();
 void libloader_close(libloader_device_t dev);
