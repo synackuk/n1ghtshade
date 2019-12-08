@@ -35,6 +35,7 @@
 * Most of these can be installed with homebrew
 * arm-elf-gcc (you can install with macports)
 * [bin2c](https://github.com/gwilymk/bin2c) in the path
+* hfsplus from [xpwn](https://github.com/xerub/xpwn) in the path
 * libcrypto
 * libzip
 * libplist
