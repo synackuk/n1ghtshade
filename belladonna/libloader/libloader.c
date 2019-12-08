@@ -54,7 +54,7 @@ uint16_t libloader_get_cpid(libloader_device_t dev) {
 uint8_t libloader_get_bdid(libloader_device_t dev) {
 	char* bdid_ptr = strstr((char*)dev->serial, "BDID:");
 	if(!bdid_ptr) {
-		return 0;
+		return -1;
 	}
 	uint32_t bdid;
 	sscanf(bdid_ptr, "BDID:%x", &bdid);
@@ -68,7 +68,7 @@ char* libloader_get_identifier(libloader_device_t dev) {
 		return NULL;
 	}
 	uint8_t bdid = libloader_get_bdid(dev);
-	if(!bdid) {
+	if(bdid == -1) {
 		return NULL;
 	}
 	while(device_identifiers[i].product_identifier != NULL) {
