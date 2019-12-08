@@ -3,9 +3,9 @@
 
 // These values are constant to this type of loader - atropine is designed to work regardless of the loader used
 
-// The offset from the loadaddress we copy atrophine to after the first run
+// The offset from the loadaddress we copy atropine to after the first run
 
-#define LOADADDRESS_OFFSET 0x2000000
+#define LOADADDRESS_OFFSET 0x3000000
 
 // The loader magic
 
@@ -29,7 +29,7 @@
 
 // Whether this is a debug build
 
-#define DEBUG
+//#define DEBUG
 
 // Whether or not to relocate the payload
 
