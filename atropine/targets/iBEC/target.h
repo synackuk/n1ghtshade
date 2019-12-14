@@ -5,7 +5,7 @@
 
 // The offset from the loadaddress we copy atropine to after the first run
 
-#define LOADADDRESS_OFFSET 0x3000000
+#define LOADADDRESS_OFFSET 0x2000000
 
 // The loader magic
 

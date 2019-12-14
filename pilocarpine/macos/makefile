@@ -2,8 +2,8 @@ CC = gcc
 STRIP = strip
 RM = rm
 INSTALL_NAME_TOOL = install_name_tool
-CFLAGS = -I. -I../../belladonna
-LDFLAGS = -L/usr/local/lib -L/usr/lib -L../../belladonna/ -L../../belladonna/libloader -L../../belladonna/libidevicerestore -L/usr/local/opt/openssl/lib
+CFLAGS = -I. -I../../belladonna -mmacosx-version-min=10.12
+LDFLAGS = -L/usr/local/lib -L/usr/lib -L../../belladonna/ -L../../belladonna/libloader -L../../belladonna/libidevicerestore -L/usr/local/opt/openssl/lib -mmacosx-version-min=10.12
 LIBRARIES = -lcrypto -lz -lzip -lplist -lcurl -lfragmentzip -lusb-1.0 -lbelladonna -lloader -lirecovery -limobiledevice -lidevicerestore
 FRAMEWORKS = -framework Cocoa
 OBJECTS = main.o restore_view.o jailbreak_view.o tethered_boot_view.o main_view.o common.o

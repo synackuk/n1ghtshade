@@ -1,7 +1,7 @@
 CC = gcc
 AR = ar
 RM = rm
-CFLAGS = -I/usr/local/include -I/opt/local/include -I. -I./ipsw -I./libloader
+CFLAGS = -I/usr/local/include -I/opt/local/include -I. -I./ipsw -I./libloader -mmacosx-version-min=10.12
 OBJECTS = libbelladonna.o exploits/checkm8/checkm8.o libloader/libloader.a libidevicerestore/libidevicerestore.a
 PAYLOADS = payloads/atropine.h payloads/hyoscine.h
 

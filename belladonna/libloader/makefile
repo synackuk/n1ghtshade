@@ -1,7 +1,7 @@
 CC = gcc
 AR = ar
 RM = rm
-CFLAGS = -I/usr/local/include -I/opt/local/include -I.
+CFLAGS = -I/usr/local/include -I/opt/local/include -I. -mmacosx-version-min=10.12
 OBJECTS = libloader.o
 
 all: libloader.a

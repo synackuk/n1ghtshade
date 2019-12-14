@@ -118,9 +118,25 @@ libloader_device_t libloader_get_device_handle() {
 	if(ret != 0){
 		return NULL;
 	}
-	ret = libusb_claim_interface(dev->dev, 0);
+	ret = libusb_set_configuration(dev->dev, 1);
 	if(ret != 0){
 		return NULL;
+	}
+	if(dev->mode > RECOVERY_MODE_2) {
+		ret = libusb_claim_interface(dev->dev, 1);
+		if(ret != 0){
+			return NULL;
+		}
+		ret = libusb_set_interface_alt_setting(dev->dev, 1, 1);
+		if (ret != 0) {
+			return NULL;
+		}
+	}
+	else {
+		ret = libusb_claim_interface(dev->dev, 0);
+		if(ret != 0){
+			return NULL;
+		}
 	}
 	return dev;
 }
@@ -129,7 +145,12 @@ void libloader_close(libloader_device_t dev) {
 	if(!dev) {
 		return;
 	}
-	libusb_release_interface(dev->dev, 0);
+	if(dev->mode > RECOVERY_MODE_2) {
+		libusb_release_interface(dev->dev, 1);
+	}
+	else {
+		libusb_release_interface(dev->dev, 0);
+	}
 	libusb_close(dev->dev);
 	free(dev);
 }
@@ -295,15 +316,16 @@ int libloader_async_ctrl_transfer(libloader_device_t dev, uint8_t bm_request_typ
 libloader_device_t libloader_reconnect(libloader_device_t dev, float wait) {
 	libloader_close(dev);
 	if(wait != 0){
-		sleep(wait);
+		long start = get_nanos();
+		while((get_nanos() - start) < (wait * (10 * 6)));
 	}
 	libloader_device_t new_dev = NULL;
-	float start = clock();
 	for(int i = 0; i < 5; i++){
 		new_dev = libloader_get_device_handle();
 		if(new_dev){
 			return new_dev;
 		}
+		printf("fUwU\n");
 		sleep(1);
 	}
 	return NULL;
