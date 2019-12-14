@@ -325,7 +325,6 @@ libloader_device_t libloader_reconnect(libloader_device_t dev, float wait) {
 		if(new_dev){
 			return new_dev;
 		}
-		printf("fUwU\n");
 		sleep(1);
 	}
 	return NULL;
