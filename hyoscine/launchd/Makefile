@@ -8,6 +8,7 @@ CFLAGS = -I. -arch armv6 -static -nodefaultlibs -nostdlib -isysroot$(SYSROOT) -I
 LDFLAGS = -arch armv6 -Wl,-e,_main -Wl,-no_pie -nostartfiles
 
 all: launchd
+	@echo STRIP launchd
 	@$(STRIP) launchd
 	@$(LDID) -S launchd
 

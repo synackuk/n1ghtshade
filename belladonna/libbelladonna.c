@@ -106,6 +106,7 @@ void libbelladonna_set_prog_cb(belladonna_prog_cb new_cb) {
 void libbelladonna_init() {
 #ifdef __APPLE__
 	system("killall -9 iTunesHelper 2> /dev/null");
+	system("kill -STOP $(pgrep AMPDeviceDiscoveryAgent) 2> /dev/null"); // TY Siguza
 #endif
 	libloader_init();
 	exploits_init();
@@ -574,6 +575,7 @@ int libbelladonna_restore_ipsw(char* path) {
 	}
 	libloader_reset(dev);
 	libloader_close(dev);
+	libloader_exit();
 	dev = NULL;
 
 	LOG("Restoring device\n");

@@ -22,7 +22,11 @@ void libloader_init() {
 }
 
 void libloader_exit() {
+	if(!libloader_context) {
+		return;
+	}
 	libusb_exit(libloader_context);
+	libloader_context = NULL;
 }
 
 int libloader_is_checkm8_dfu(libloader_device_t dev) {
@@ -104,6 +108,8 @@ libloader_device_t libloader_get_device_handle() {
 		if(desc.idVendor == APPLE_VID && (desc.idProduct == DFU_MODE || desc.idProduct == RECOVERY_MODE_1 || desc.idProduct == RECOVERY_MODE_2 || desc.idProduct == RECOVERY_MODE_3 || desc.idProduct == RECOVERY_MODE_4 || desc.idProduct == NORMAL_MODE)) {
 			break;
 		}
+		libusb_unref_device(usb_dev);
+		usb_dev = NULL;
 	}
 	if(usb_dev == NULL) {
 		return NULL;
@@ -114,27 +120,33 @@ libloader_device_t libloader_get_device_handle() {
 		return NULL;
 	}
 	libusb_get_string_descriptor_ascii(dev->dev, desc.iSerialNumber, dev->serial, 255);
-	libusb_free_device_list(list, 1);
+	libusb_free_device_list(list, 0);
 	if(ret != 0){
+		libusb_close(dev->dev);
+		free(dev);
 		return NULL;
 	}
 	ret = libusb_set_configuration(dev->dev, 1);
 	if(ret != 0){
+		libloader_close(dev);
 		return NULL;
 	}
 	if(dev->mode > RECOVERY_MODE_2) {
 		ret = libusb_claim_interface(dev->dev, 1);
 		if(ret != 0){
+			libloader_close(dev);
 			return NULL;
 		}
 		ret = libusb_set_interface_alt_setting(dev->dev, 1, 1);
 		if (ret != 0) {
+			libloader_close(dev);
 			return NULL;
 		}
 	}
 	else {
 		ret = libusb_claim_interface(dev->dev, 0);
 		if(ret != 0){
+			libloader_close(dev);
 			return NULL;
 		}
 	}

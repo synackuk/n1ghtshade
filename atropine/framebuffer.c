@@ -5,7 +5,7 @@ int fb_x = 0;
 int fb_y = 0;
 
 int init_framebuffer() {
-	fb_print("Pwned by SynAck ;)\n");
+	fb_print("Pwned by synackuk ;)\n");
 	debug("initialised framebuffer.\n");
 	return 0;
 }

@@ -16,6 +16,11 @@ int fb_echo_command(int argc, command_args* argv) {
 	return 0;
 }
 
+int decrypt_command(int argc, command_args* argv) {
+	decrypt_image(load_address);
+	return 0;
+}
+
 int jump_command(int argc, command_args* argv) {
 	jumpto(0, load_address, 0, 0);
 	return 0;
@@ -61,6 +66,10 @@ int load_command(int argc, command_args* argv) {
 	else if(!strcmp(argv[1].string, "logo")) {
 		load_image_from_bdev(addr, LOGO_TAG, (size_t*)&size);
 		fb_set_loc(0, 0);
+	}
+	else if(!strcmp(argv[1].string, "ibot")) {
+		log("Loading iBoot\n");
+		load_image_from_bdev(addr, IBOOT_TAG, (size_t*)&size);
 	}
 	set_env_uint("filesize", size, 0);
 	return 0;
@@ -125,6 +134,7 @@ int init_menu_commands() {
 	add_command("patch", &patch_command, "Patches a decryped image uploaded to the load address");
 	add_command("load", &load_command, "Loads on device images to the load addresss");
 	add_command("boot-args", &boot_args_command, "Sets boot arguments for loader");
+	add_command("decrypt", &decrypt_command, "Decrypts image at load address");
 
 	debug("Initialised menu commands.\n");
 	return 0;
