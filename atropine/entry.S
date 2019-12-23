@@ -24,7 +24,8 @@ reset:
 	mov	r5, pc @ Otherwise find the load address
 	lsr	r5, #24
 	lsl r5, #24
-	add r1, r5, #LOADADDRESS_OFFSET @ And add a specified offset so that the payload survives other files being uploaded to the buffer
+	ldr r6, =LOADADDRESS_OFFSET
+	add r1, r5, r6 @ And add a specified offset so that the payload survives other files being uploaded to the buffer
 	mov r0, r5
 	b relocate @ relocate(loadaddr, loadaddr + LOADADDRESS_OFFSET)
 

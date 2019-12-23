@@ -741,36 +741,46 @@ int patch_i_can_has_debugger(char* address) {
 int patch_kernel(char* address) {
 	int ret;
 
-	log("Patching proc_enforce\n");
+	log("Patching proc_enforce... ");
 	ret = patch_proc_enforce(address);
 	if(ret != 0) {
+		log("failed\n");
 		return -1;
 	}
+	log("done\n");
 
-	log("Patching mount\n");
+	log("Patching mount... ");
 	ret = patch_mount(address);
 	if(ret != 0) {
+		log("failed\n");
 		return -1;
 	}
+	log("done\n");
 
-	log("Patching amfi\n");
+	log("Patching amfi... ");
 	ret = patch_amfi(address);
 	if(ret != 0) {
+		log("failed\n");
 		return -1;
 	}
+	log("done\n");
 
-	log("Patching sandbox\n");
+	log("Patching sandbox... ");
 	ret = patch_sandbox(address);
 	if(ret != 0) {
+		log("failed\n");
 		return -1;
 	}
+	log("done\n");
 
-	log("Patching i_can_has_debugger\n");
+	log("Patching i_can_has_debugger... ");
 	ret = patch_i_can_has_debugger(address);
 	if(ret != 0) {
+		log("failed\n");
 		return -1;
 	}
-	
+	log("done\n");
+
 	return 0;
 }
 

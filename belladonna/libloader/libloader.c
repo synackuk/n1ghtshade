@@ -316,7 +316,7 @@ int libloader_async_ctrl_transfer(libloader_device_t dev, uint8_t bm_request_typ
 	if(ret != 0) {
 		return -1;
 	}
-	while((get_nanos() - start) < (timeout * (10 * 6)));
+	while((get_nanos() - start) < (timeout * (1000000)));
 	ret = libusb_cancel_transfer(transfer);
 	if(ret != 0) {
 		return -1;
@@ -329,7 +329,7 @@ libloader_device_t libloader_reconnect(libloader_device_t dev, float wait) {
 	libloader_close(dev);
 	if(wait != 0){
 		long start = get_nanos();
-		while((get_nanos() - start) < (wait * (10 * 6)));
+		while((get_nanos() - start) < (wait * (1000000000)));
 	}
 	libloader_device_t new_dev = NULL;
 	for(int i = 0; i < 5; i++){

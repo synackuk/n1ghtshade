@@ -26,6 +26,11 @@ int jump_command(int argc, command_args* argv) {
 	return 0;
 }
 
+int logo_command(int argc, command_args* argv) {
+	fb_draw_image((uint32_t*)load_address, ((display_width - 320) / 2), ((display_height - 480) / 2), 320, 480);
+	return 0;
+}
+
 int patch_command(int argc, command_args* argv) {
 	if(!strcmp(argv[1].string, "ibot")){
 		char boot_args[255];
@@ -48,28 +53,31 @@ int load_command(int argc, command_args* argv) {
 		return -1;
 	}
 	if(!strcmp(argv[1].string, "krnl")){
-		log("Loading kernel\n");
+		log("Loading kernel... ");
 		/* load kernel, iH8sn0w style */
 		fs_mount("nand0a", "hfs", "/boot");
 		if ((size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache", addr, &size)) &&
 			(size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache.s5l8920x", addr, &size)) &&
 			(size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache.s5l8922x", addr, &size)) &&
 			(size = 0x1000000, fs_load_file("/boot/System/Library/Caches/com.apple.kernelcaches/kernelcache.s5l8720x", addr, &size))) {
-			error("Failed to read kernel\n");
+			error("failed\n");
 			return -1;
 		}
+		log("done\n");
 	}
 	else if(!strcmp(argv[1].string, "dtre")) {
-		log("Loading device tree\n");
+		log("Loading device tree... ");
 		load_image_from_bdev(addr, DEVICE_TREE_TAG, (size_t*)&size);
+		log("done\n");
 	}
 	else if(!strcmp(argv[1].string, "logo")) {
 		load_image_from_bdev(addr, LOGO_TAG, (size_t*)&size);
 		fb_set_loc(0, 0);
 	}
 	else if(!strcmp(argv[1].string, "ibot")) {
-		log("Loading iBoot\n");
+		log("Loading iBoot... ");
 		load_image_from_bdev(addr, IBOOT_TAG, (size_t*)&size);
+		log("done\n");
 	}
 	set_env_uint("filesize", size, 0);
 	return 0;
@@ -135,6 +143,7 @@ int init_menu_commands() {
 	add_command("load", &load_command, "Loads on device images to the load addresss");
 	add_command("boot-args", &boot_args_command, "Sets boot arguments for loader");
 	add_command("decrypt", &decrypt_command, "Decrypts image at load address");
+	add_command("logo", &logo_command, "Sets logo from load address");
 
 	debug("Initialised menu commands.\n");
 	return 0;

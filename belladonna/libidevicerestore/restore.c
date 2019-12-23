@@ -1076,8 +1076,8 @@ int restore_send_nor(restored_client_t restore, struct idevicerestore_client_t* 
 			error("ERROR: Unable to get component path for LLB\n");
 			return -1;
 		}
-
 		ret = download_firmware_component(ipsw_url, llb_path, (char **)&component_data, (size_t*)&component_size);
+		free(llb_path);
 		if (ret < 0) {
 			error("ERROR: Could not fetch latest LLB.\n");
 			return ret;

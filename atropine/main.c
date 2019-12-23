@@ -47,7 +47,6 @@ int main(int argc, command_args* argv) {
 			error("Failed to initialise atropine.");
 			return -1;
 		}
-		log("initialised atropine.\n");
 		init = 1;
 		return 0;
 	}

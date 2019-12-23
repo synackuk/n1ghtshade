@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <logo.h>
 #include <payloads/atropine.h>
 #include <payloads/hyoscine.h>
 #include <libidevicerestore/idevicerestore.h>
@@ -178,51 +179,17 @@ int libbelladonna_exploit() {
 
 static int download_firmware_component(char* ipsw_url, char* component_path, char** out_buf, size_t* component_len) {
 	int ret;
-#ifdef WIN32
-	char tmp_path[512];
-	char tmp_file_path[512];
-	GetTempPath(512, tmp_file_path);
-	GetTempFileName(tmp_file_path, "comp", 0, tmp_path);
-#else
-	char* tmp_path = "/tmp/component";
-#endif
 	fragmentzip_t *ipsw = fragmentzip_open(ipsw_url);
 	if (!ipsw) {
-		error("failed to open ipsw.");
 		return -1;
 	}
-	ret = fragmentzip_download_file(ipsw, component_path, tmp_path, belladonna_prog);
+	ret = fragmentzip_download_to_memory(ipsw, component_path, out_buf, component_len, belladonna_prog);
 	
 	fragmentzip_close(ipsw);
 	
 	if(ret != 0) {
-		error("Failed to download firmware component.");
 		return -1;
 	}
-	FILE* f = fopen(tmp_path, "rb");
-	if(!f) {
-		error("Failed to open firmware component.");
-		return -1;
-	}
-	fseek(f, 0, SEEK_END);
-	*component_len = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
-	*out_buf = malloc(*component_len);
-	if(!*out_buf) {
-		error("Out of memory.");
-		return -1;
-	}
-	ret = fread(*out_buf, 1, *component_len, f);
-	fclose(f);
-	if(ret != *component_len) {
-		error("Failed to read in firmware component.");
-		free(*out_buf);
-		*out_buf = NULL;
-		*component_len = 0;
-		return -1;
-	}
-	unlink(tmp_path);
 	return 0;
 }
 
@@ -404,6 +371,18 @@ static int load_payload() {
 		error("Failed to execute iBoot payload.");
 		return -1;
 	}
+	LOG("Uploading logo\n");
+	ret = libloader_send_buffer(dev, (unsigned char*)apple_logo, apple_logo_length);
+	if(ret != 0) {
+		error("Failed to upload logo.");
+		return -1;
+	}
+	LOG("Setting logo\n");
+	ret = libloader_send_cmd(dev, "atropine logo");
+	if(ret != 0) {
+		error("Failed to execute iBoot payload.");
+		return -1;
+	}
 	return 0;
 }
 
@@ -419,7 +398,7 @@ int libbelladonna_enter_recovery() {
 		error("Failed to boot iBSS.");
 		return -1;
 	}
-	dev = libloader_reconnect(dev, 5);
+	dev = libloader_reconnect(dev, 1);
 	if(!dev) {
 		error("Failed to reconnect to device.");
 		return -1;
@@ -429,7 +408,7 @@ int libbelladonna_enter_recovery() {
 		error("Failed to boot iBEC.");
 		return -1;
 	}
-	dev = libloader_reconnect(dev, 5);
+	dev = libloader_reconnect(dev, 1);
 	if(!dev) {
 		error("Failed to boot iBEC.");
 		return -1;

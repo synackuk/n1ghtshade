@@ -8,7 +8,7 @@ BUILD_DIR = bin
 CFLAGS =  -nostdlib -Wno-multichar -Wno-packed-bitfield-compat -Os -mlittle-endian -std=gnu99 -fpie -I$(BASE_DIR)/includes -I$(BASE_DIR)/plib -I$(BASE_DIR)/iBoot32Patcher -I.
 LDFLAGS = -L$(BASE_DIR)plib -L$(BASE_DIR)iBoot32Patcher -nostdlib -Tscript.ld
 LDLIBS = -liBoot32Patcher -lp -lgcc
-OBJECTS = memory.o finders.o kernel.o relocate.o image.o command.o menu_commands.o framebuffer.o constants.o main.o
+OBJECTS = framebuffer.o constants.o main.o memory.o finders.o relocate.o image.o command.o menu_commands.o kernel.o
 OBJS = $(patsubst %,$(BUILD_DIR)/%,$(OBJECTS))
 OBJCOPY = $(CROSS)objcopy
 
