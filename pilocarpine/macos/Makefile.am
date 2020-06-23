@@ -9,3 +9,6 @@ n1ghtshade_SOURCES = main.m common.m dfu_enter_view.m other_options_view.m tasks
 
 all-local:
 	@mv n1ghtshade n1ghtshade.app/Contents/MacOS
+
+clean-local:
+	@rm -rf n1ghtshade.app/Contents/MacOS/n1ghtshade
