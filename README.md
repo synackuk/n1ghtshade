@@ -22,7 +22,7 @@ A 32 bit checkm8 based downgrade utility.
 
 ### Dependencies
 
-* arm-elf-gcc (you can install with macports)
+* arm-none-eabi-gcc
 * libcrypto
 * libzip
 * libplist
