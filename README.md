@@ -9,7 +9,7 @@ A 32 bit checkm8 based downgrade utility.
 
 * n1ghtshade can be downloaded from [here](https://github.com/synackuk/n1ghtshade/releases).
 
-#### Bugs
+### Bugs
 
 * if you identify any bugs please contact me on Twitter or use the github issues tab.
 
@@ -24,7 +24,9 @@ A 32 bit checkm8 based downgrade utility.
 
 * arm-elf-gcc (you can install with macports)
 * libcrypto
+* libfragmentzip
 * libzip
 * libplist
 * [libirecovery](https://github.com/synackuk/libirecovery)
 * libimobiledevice
+* libusb (if on linux)

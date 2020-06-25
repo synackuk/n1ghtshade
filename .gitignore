@@ -60,3 +60,4 @@ src/.libs
 tools/.libs/*
 tools/belladonna
 ar-lib
+.irecovery

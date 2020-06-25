@@ -51,10 +51,12 @@ case ${host_os} in
     AC_MSG_RESULT([yes])
     AC_DEFINE([_DARWIN_BETTER_REALPATH], [1], [Use better method for realpath])
     AX_PTHREAD([], [AC_MSG_ERROR([pthread is required to build $PACKAGE])])
+    darwin=true
     ;;
   *)
     AC_MSG_RESULT([yes])
     AX_PTHREAD([], [AC_MSG_ERROR([pthread is required to build $PACKAGE])])
+    linux=true
     ;;
 esac
 
@@ -62,6 +64,8 @@ AC_CHECK_FUNCS([strsep strcspn mkstemp realpath])
 
 
 AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
+AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
+AM_CONDITIONAL(LINUX, test x$linux = xtrue)
 
 AC_SYS_LARGEFILE
 
@@ -70,5 +74,5 @@ AC_SUBST(GLOBAL_CFLAGS)
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-AC_CONFIG_FILES([Makefile pilocarpine/Makefile pilocarpine/macos/Makefile])
+AC_CONFIG_FILES([Makefile pilocarpine/Makefile pilocarpine/macos/Makefile pilocarpine/cli/Makefile])
 AC_OUTPUT

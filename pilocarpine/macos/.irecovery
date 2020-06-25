@@ -1,7 +1,0 @@
-_HiStOrY_V2_
-fsboot
-reset
-getenv\040auto-boot
-setenv\040auto-boot\040true
-saveenv
-reset
