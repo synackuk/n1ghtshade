@@ -16,8 +16,8 @@ A 32 bit checkm8 based downgrade utility.
 ### Components
 
 * [belladonna](https://github.com/synackuk/belladonna) Injects the checkm8 payload and facilitates the execution of other components
-* [atropine] Patches iBoot and kernelcache components on the fly
-* [hyoscine] Installs the n1ghtshade app and prepares the device for a Cydia install
+* [atropine](https://github.com/synackuk/atropine) Patches iBoot and kernelcache components on the fly
+* [hyoscine](https://github.com/synackuk/hyoscine) Installs the n1ghtshade app and prepares the device for a Cydia install
 
 
 ### Dependencies
