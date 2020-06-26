@@ -11,6 +11,8 @@ test -z "$srcdir" && srcdir=.
 	autoconf
 )
 
+git submodule update --init --force --remote
+
 
 SUBDIRS="belladonna"
 for SUB in $SUBDIRS; do

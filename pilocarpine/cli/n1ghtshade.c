@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
 	int ramdisk_boot = 0;
 	char* restore_path = NULL;
 	belladonna_init();
+	printf("n1ghtshade by synackuk, with thanks to: axi0mX, Daniel Volt, Chronic Dev, xerub, iH8Sn0w, tihmstar, nyan_satan, libimobiledevice and RealiMuseum.");
 	int opt;
 	if(argc < 2) {
 		usage(argv);
