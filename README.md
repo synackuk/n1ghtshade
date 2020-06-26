@@ -2,7 +2,7 @@
 
 A 32 bit checkm8 based downgrade utility.
 
-* n1ghtshade permits the downgrade/jailbreak of A6/A6x devices
+* n1ghtshade permits the downgrade/jailbreak of 32 bit iOS devices
 * Supports iOS 6 - 9.3.5
 
 ### Download

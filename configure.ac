@@ -33,7 +33,7 @@ PKG_CHECK_MODULES(zlib, zlib >= 1.2)
 PKG_CHECK_MODULES(libzip, libzip)
 PKG_CHECK_MODULES(libirecovery, libirecovery >= 0.2.0)
 PKG_CHECK_MODULES(libimobiledevice, libimobiledevice-1.0 >= 1.2.1)
-PKG_CHECK_MODULES(libplist, libplist >= 1.12)
+PKG_CHECK_MODULES(libplist, libplist-2.0)
 PKG_CHECK_MODULES(openssl, openssl >= 0.9.8)
 PKG_CHECK_MODULES(libcurl, libcurl >= 7.0)
 
@@ -44,28 +44,28 @@ AC_MSG_CHECKING([whether we need platform-specific build settings])
 case ${host_os} in
   *mingw32*|*cygwin*)
     AC_MSG_RESULT([yes])
-    win32=true
+    build_win32=yes
     GLOBAL_CFLAGS+="-DWIN32 -D__LITTLE_ENDIAN__=1"
     ;;
   darwin*)
     AC_MSG_RESULT([yes])
     AC_DEFINE([_DARWIN_BETTER_REALPATH], [1], [Use better method for realpath])
     AX_PTHREAD([], [AC_MSG_ERROR([pthread is required to build $PACKAGE])])
-    darwin=true
+    build_darwin=yes
     ;;
   *)
     AC_MSG_RESULT([yes])
     AX_PTHREAD([], [AC_MSG_ERROR([pthread is required to build $PACKAGE])])
-    linux=true
+    build_linux=yes
     ;;
 esac
 
 AC_CHECK_FUNCS([strsep strcspn mkstemp realpath])
 
 
-AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
-AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
-AM_CONDITIONAL(LINUX, test x$linux = xtrue)
+AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
+AM_CONDITIONAL([WIN32], [test "$build_win32" = "yes"])
+AM_CONDITIONAL([DARWIN], [test "$build_darwin" = "yes"])
 
 AC_SYS_LARGEFILE
 

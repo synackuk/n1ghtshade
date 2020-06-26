@@ -5,20 +5,16 @@ test -z "$srcdir" && srcdir=.
 
 (
 	cd "$srcdir"
+	git submodule update --init --force --remote
 	aclocal -I m4
 	autoheader
 	automake --add-missing
 	autoconf
 )
 
-git submodule update --init --force --remote
-
-
-SUBDIRS="belladonna"
-for SUB in $SUBDIRS; do
-    pushd $SUB
-    ./autogen.sh
-    popd
-done
+(
+	cd belladonna
+	./autogen.sh
+)
 
 "$srcdir/configure" "$@"

@@ -1,4 +1,5 @@
-SUBDIRS = cli
 if DARWIN
-	SUBDIRS += macos
+SPECIFIC_TARGET = macos
 endif
+
+SUBDIRS = cli $(SPECIFIC_TARGET)
