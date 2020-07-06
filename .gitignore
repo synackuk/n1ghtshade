@@ -36,7 +36,6 @@ autom4te.cache/*
 m4/*
 *.dll
 *.so
-*.dylib
 *.patch
 aclocal.m4
 config.h
