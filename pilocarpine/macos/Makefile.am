@@ -2,7 +2,7 @@ AM_OBJCFLAGS = $(GLOBAL_CFLAGS) $(libfragmentzip_CFLAGS) $(zlib_CFLAGS) $(libzip
 AM_LDFLAGS = $(libfragmentzip_LIBS) $(zlib_LIBS) $(libzip_LIBS) $(libirecovery_LIBS) $(libimobiledevice_LIBS) $(libplist_LIBS) $(openssl_LIBS) $(libcurl_LIBS) $(PTHREAD_CLIBS)
 
 noinst_PROGRAMS = n1ghtshade
-n1ghtshade_OBJCFLAGS = -I../../belladonna/src $(AM_OBJCFLAGS)
+n1ghtshade_OBJCFLAGS = -I../../belladonna/src $(AM_OBJCFLAGS) -mmacosx-version-min=10.10
 n1ghtshade_LDFLAGS = -rpath @loader_path/../Frameworks -framework Cocoa -Ln1ghtshade.app/Contents/Frameworks
 n1ghtshade_LDADD = ../../belladonna/src/libbelladonna.a $(AM_LDFLAGS)
 n1ghtshade_SOURCES = main.m common.m dfu_enter_view.m other_options_view.m tasks_view.m main_view.m callback.m
