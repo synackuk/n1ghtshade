@@ -8,12 +8,6 @@ typedef enum {
 	jailbreak = 2
 } options_t;
 
-extern char* input_ipsw;
-
-extern options_t option;
-
-extern NSView* tasks_view;
-
 @interface TasksView : NSView {}
 
 @property (assign) NSButton* boot_button;
@@ -30,5 +24,13 @@ extern NSView* tasks_view;
 @property (assign) BOOL has_error;
 
 @end
+
+extern int hacktivate;
+extern char* input_ipsw;
+extern char* boot_args;
+
+extern options_t option;
+
+extern TasksView* tasks_view;
 
 #endif

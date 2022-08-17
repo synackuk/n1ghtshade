@@ -4,6 +4,7 @@
 #import <common.h>
 
 #include <libbelladonna.h>
+#include <dimensions.h>
 
 static NSButton* start_button;
 
@@ -11,22 +12,31 @@ static NSButton* start_button;
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow {
 	[self.subviews makeObjectsPerformSelector: @selector(removeFromSuperview)];
+	
 	if(option == restore) {
-		self.instructions_textbox = create_textbox(@"To begin, you must select the IPSW you wish to restore with the \"Restore IPSW\" button. Then you must ensure your device in DFU mode. To do this, press \"Start\" when you are ready and follow the instructions.", 10, 175, 460, 60, self);
+		self.instructions_textbox = create_textbox(@"To begin, you must select the IPSW you wish to restore with the \"Restore IPSW\" button. Then you must ensure your device in DFU mode. To do this, press \"Start\" when you are ready and follow the instructions.", PADDING, 520, TEXT_WIDTH, TEXT_HEIGHT, self);
 	}
 	else {
-		self.instructions_textbox = create_textbox(@"To begin, you must ensure your device is in DFU mode. To do this, press \"Start\" when you are ready and follow the instructions.", 10, 175, 460, 60, self);
+		self.instructions_textbox = create_textbox(@"To begin, you must ensure your device is in DFU mode. To do this, press \"Start\" when you are ready and follow the instructions.", PADDING, 520, TEXT_WIDTH, TEXT_HEIGHT, self);
 	}
-	self.start_button = create_button(@"Start", 20, 150, 160, 28, @selector(start_btn), self);
+	self.start_button = create_button(@"Start", PADDING, 150, BUTTON_WIDTH, BUTTON_HEIGHT, @selector(start_btn), self);
 
-	self.step_1_label = create_label(@"Hold power and home for 10 seconds.", 205, 144, 250, 28, self);
-	self.step_2_label = create_label(@"Hold home for 10 seconds.", 205, 106, 250, 28, self);
+	self.step_1_label = create_label(@"Hold power and home for 10 seconds.", PADDING, 460, TEXT_WIDTH, TEXT_HEIGHT, self);
+	self.step_2_label = create_label(@"Hold home for 10 seconds.", PADDING, 360, TEXT_WIDTH, TEXT_HEIGHT, self);
 	[self set_stage: 0 withString: NULL];
 
-	self.back_button = create_button(@"Back", 300, 20, 160, 28, @selector(back_btn), self);
+	self.back_button = create_button(@"Back", BACK_BUTTON_X, BACK_BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, @selector(back_btn), self);
 
 	if(option == restore) {
-		self.ipsw_button = create_button(@"Select IPSW", 20, 110, 160, 28, @selector(ipsw_select_btn), self);
+		self.ipsw_button = create_button(@"Select IPSW", PADDING * 3 + BUTTON_WIDTH, 150, BUTTON_WIDTH, BUTTON_HEIGHT, @selector(ipsw_select_btn), self);
+	}
+	else if(option == boot_tethered) {
+		self.boot_args_label = create_label(@"Enter custom boot args if you wish:", PADDING, 200, TEXT_WIDTH, TEXT_HEIGHT, self);
+		self.boot_args_enter = create_editbox(@"-v", PADDING * 22, 200, 200, TEXT_HEIGHT, self);
+	}
+	else {
+		self.should_hacktivate_button = create_checkbox(@"Hacktivate(note this will break cellular connectivity)", PADDING, 200, TEXT_WIDTH, BUTTON_HEIGHT, self);
+
 	}
 
 }
@@ -95,24 +105,43 @@ static NSButton* start_button;
 		[self.instructions_textbox setString: @"Select an IPSW first.\n"];
 		return;
 	}
+	else if(option == boot_tethered) {
+		boot_args = strdup([[self.boot_args_enter stringValue] UTF8String]);
+	}
+	else {
+		hacktivate = [self.should_hacktivate_button state];
+	}
+
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 		for(int i = 1; i <= 10; i += 1) {
 			NSString* new_string = [NSString stringWithFormat:@"Hold power and home for %d seconds.", 10 - i];
 			[self set_stage: 1 withString: new_string];
-			int ret = belladonna_get_device();
+			int ret = belladonna_get_device(ctx);
 			if(ret == 0) {
-				swap_view(tasks_view);
-				return;
+				if(!(ctx->loaded_img == RECOVERY_IMG_SECUREROM || ctx->loaded_img == RECOVERY_IMG_PWND_DFU)) {
+					belladonna_close_device(ctx);
+
+				}
+				else {
+					swap_view(tasks_view);
+					return;
+				}
 			}
 			sleep(1);
 		}
 		for(int i = 1; i <= 10; i += 1) {
 			NSString* new_string = [NSString stringWithFormat:@"Hold home for %d seconds.", 10 - i];
 			[self set_stage: 2 withString: new_string];
-			int ret = belladonna_get_device();
+			int ret = belladonna_get_device(ctx);
 			if(ret == 0) {
-				swap_view(tasks_view);
-				return;
+				if(!(ctx->loaded_img == RECOVERY_IMG_SECUREROM || ctx->loaded_img == RECOVERY_IMG_PWND_DFU)) {
+					belladonna_close_device(ctx);
+
+				}
+				else {
+					swap_view(tasks_view);
+					return;
+				}
 			}
 			sleep(1);
 		}

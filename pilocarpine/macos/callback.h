@@ -1,8 +1,8 @@
 #ifndef CALLBACK_H
 #define CALLBACK_H
 
-void log_callback(char* msg);
-void progress_callback(unsigned int progress);
-void error_callback(char* error);
+int log_callback(const char* fmt, ...);
+int progress_callback(double progress);
+int error_callback(const char* fmt, ...);
 
 #endif

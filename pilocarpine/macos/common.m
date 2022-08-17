@@ -3,8 +3,12 @@
 
 #define MAX_VIEW 20
 
+NSWindow* window;
+
 static NSView* views[MAX_VIEW] = {NULL};
 static unsigned int curr_view = 0;
+
+belladonna_ctx_t ctx = NULL;
 
 void new_view(NSView* view) {
 	curr_view += 1;
@@ -91,6 +95,15 @@ NSButton* create_button(NSString* title, int x, int y, int width, int height, SE
 	return btn;
 }
 
+NSButton* create_checkbox(NSString* title, int x, int y, int width, int height, NSView* view) {
+	NSButton *btn = [[NSButton alloc] initWithFrame:NSMakeRect(x, y, width, height)]; 
+	[btn setButtonType: NSButtonTypeSwitch];
+	[btn setTitle:title];
+	[view addSubview:btn]; 
+	return btn;
+}
+
+
 NSTextView* create_textbox(NSString* text, int x, int y, int width, int height, NSView* view) {
 	NSTextView* label = [[NSTextView alloc] initWithFrame:NSMakeRect(x, y, width, height)];
 	[label setString:text];
@@ -132,6 +145,13 @@ NSTextField* create_label(NSString* title, int x, int y, int width, int height, 
 	return label;
 }
 
+NSTextField* create_editbox(NSString* title, int x, int y, int width, int height, NSView* view) {
+	NSTextField* label = [[NSTextField alloc] initWithFrame:NSMakeRect(x, y, width, height)];
+	[label setStringValue:title];
+	[view addSubview:label];
+	return label;
+}
+
 NSProgressIndicator* create_progress_bar(int x, int y, int width, int height, NSView* view) {
 	NSProgressIndicator*  progress_bar = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(x, y, width, height)];
 	[progress_bar setIndeterminate:YES];
@@ -140,5 +160,13 @@ NSProgressIndicator* create_progress_bar(int x, int y, int width, int height, NS
 	[progress_bar startAnimation:nil];
 	[view addSubview:progress_bar];
 	return progress_bar;
+}
+
+
+NSImageView* create_logo(int x, int y, int width, int height, NSImage* image, NSView* view) {
+	NSImageView* logo = [[NSImageView alloc] initWithFrame:NSMakeRect(x, y, width, height)];
+	[logo setImage:image];
+	[view addSubview: logo];
+	return logo;
 }
 

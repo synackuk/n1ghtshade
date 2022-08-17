@@ -1,5 +1,0 @@
-if DARWIN
-SPECIFIC_TARGET = macos
-endif
-
-SUBDIRS = cli $(SPECIFIC_TARGET)

@@ -4,15 +4,15 @@
 #import <tasks_view.h>
 #import <other_options_view.h>
 #import <dfu_enter_view.h>
-#import <common.h>
 #import <callback.h>
+#import <common.h>
 #include <libbelladonna.h>
+#include <dimensions.h>
 
-
-NSView* main_view;
-NSView* other_options_view;
-NSView* dfu_enter_view;
-NSView* tasks_view;
+MainView* main_view;
+OtherOptionsView* other_options_view;
+DFUEnterView* dfu_enter_view;
+TasksView* tasks_view;
 
 int main(int argc, const char * argv[]) {
 
@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
 	NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 
 	// Window bounds (x, y, width, height).
-	NSRect windowRect = NSMakeRect(250, 312, 480, 270);
+	NSRect windowRect = NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO];
 	[window autorelease];
 
@@ -46,11 +46,11 @@ int main(int argc, const char * argv[]) {
 
 	// Init views
 
-	main_view = [[MainView alloc] initWithFrame:NSMakeRect(0, 0, 480, 270)];
-	other_options_view = [[OtherOptionsView alloc] initWithFrame:NSMakeRect(0, 0, 480, 270)];
+	main_view = [[MainView alloc] initWithFrame:NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)];
+	other_options_view = [[OtherOptionsView alloc] initWithFrame:NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)];
 
-	dfu_enter_view = [[DFUEnterView alloc] initWithFrame:NSMakeRect(0, 0, 480, 270)];
-	tasks_view = [[TasksView alloc] initWithFrame:NSMakeRect(0, 0, 480, 270)];
+	dfu_enter_view = [[DFUEnterView alloc] initWithFrame:NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)];
+	tasks_view = [[TasksView alloc] initWithFrame:NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)];
 
 	// Setup callbacks
 
@@ -62,13 +62,11 @@ int main(int argc, const char * argv[]) {
 
 	new_view(main_view);
 
+	belladonna_init(&ctx);
+	belladonna_set_progress_cb(ctx, progress_callback);
+	belladonna_set_log_cb(ctx, log_callback);
+	belladonna_set_error_cb(ctx, error_callback);
 
-	// initialise belladonna
-
-	belladonna_init();
-	belladonna_set_log_cb(log_callback);
-	belladonna_set_error_cb(error_callback);
-	belladonna_set_prog_cb(progress_callback);
 
 	// Show window and run event loop.
 	[window setTitle:@"n1ghtshade"];
@@ -78,7 +76,7 @@ int main(int argc, const char * argv[]) {
 
 	[pool drain];
 
-	belladonna_exit();
+	belladonna_exit(ctx);
 
 	return NSApplicationMain(argc, (const char **)argv);
 }
