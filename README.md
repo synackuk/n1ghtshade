@@ -24,3 +24,5 @@ A 32 bit checkm8 based downgrade utility.
 * [libirecovery](https://github.com/synackuk/libirecovery)
 * libimobiledevice
 * libusb (if on linux)
+* [bin2c](https://github.com/gwilymk/bin2c) in the path
+* theos
